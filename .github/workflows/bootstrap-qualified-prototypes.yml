@@ -31,20 +31,31 @@ jobs:
           debug.mkdir(exist_ok=True)
           report = []
           for index, item in enumerate(manifest['artifacts']):
-              encoded = ''.join((root / chunk).read_text().strip() for chunk in item['chunks'])
-              encoded += '=' * (-len(encoded) % 4)
-              payload = base64.b64decode(encoded)
-              data = gzip.decompress(payload) if item.get('encoding') == 'gzip+base64' else payload
-              digest = hashlib.sha256(data).hexdigest()
-              report.append({
-                  'index': index,
-                  'target': item['path'],
-                  'expected_sha256': item['sha256'],
-                  'expected_size': item['size'],
-                  'observed_sha256': digest,
-                  'observed_size': len(data),
-              })
-              (debug / f'{index:02d}.bin').write_bytes(data)
+              try:
+                  encoded = ''.join((root / chunk).read_text().strip() for chunk in item['chunks'])
+                  encoded += '=' * (-len(encoded) % 4)
+                  payload = base64.b64decode(encoded)
+                  data = gzip.decompress(payload) if item.get('encoding') == 'gzip+base64' else payload
+                  digest = hashlib.sha256(data).hexdigest()
+                  report.append({
+                      'index': index,
+                      'target': item['path'],
+                      'expected_sha256': item['sha256'],
+                      'expected_size': item['size'],
+                      'observed_sha256': digest,
+                      'observed_size': len(data),
+                      'status': 'decoded'
+                  })
+                  (debug / f'{index:02d}.bin').write_bytes(data)
+              except Exception as exc:
+                  report.append({
+                      'index': index,
+                      'target': item['path'],
+                      'expected_sha256': item['sha256'],
+                      'expected_size': item['size'],
+                      'status': 'decode_error',
+                      'error': repr(exc)
+                  })
           (debug / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
 
       - name: Commit temporary reconstruction evidence
