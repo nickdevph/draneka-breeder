@@ -20,6 +20,7 @@ jobs:
         shell: python
         run: |
           import base64
+          import gzip
           import hashlib
           import json
           from pathlib import Path
@@ -27,10 +28,9 @@ jobs:
           root = Path('.')
           manifest = json.loads((root / '.import' / 'manifest.json').read_text())
           for item in manifest['artifacts']:
-              data = b''.join(
-                  base64.b64decode((root / chunk).read_text().strip())
-                  for chunk in item['chunks']
-              )
+              encoded = ''.join((root / chunk).read_text().strip() for chunk in item['chunks'])
+              payload = base64.b64decode(encoded)
+              data = gzip.decompress(payload) if item.get('encoding') == 'gzip+base64' else payload
               digest = hashlib.sha256(data).hexdigest()
               if digest != item['sha256']:
                   raise SystemExit(f"SHA mismatch for {item['path']}: {digest} != {item['sha256']}")
