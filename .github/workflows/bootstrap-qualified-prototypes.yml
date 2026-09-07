@@ -16,7 +16,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Reassemble and verify qualified artifacts
+      - name: Reassemble payloads for byte comparison
         shell: python
         run: |
           import base64
@@ -27,26 +27,30 @@ jobs:
 
           root = Path('.')
           manifest = json.loads((root / '.import' / 'manifest.json').read_text())
-          for item in manifest['artifacts']:
+          debug = root / '.debug'
+          debug.mkdir(exist_ok=True)
+          report = []
+          for index, item in enumerate(manifest['artifacts']):
               encoded = ''.join((root / chunk).read_text().strip() for chunk in item['chunks'])
               encoded += '=' * (-len(encoded) % 4)
               payload = base64.b64decode(encoded)
               data = gzip.decompress(payload) if item.get('encoding') == 'gzip+base64' else payload
               digest = hashlib.sha256(data).hexdigest()
-              if digest != item['sha256']:
-                  raise SystemExit(f"SHA mismatch for {item['path']}: {digest} != {item['sha256']}")
-              if len(data) != item['size']:
-                  raise SystemExit(f"Size mismatch for {item['path']}: {len(data)} != {item['size']}")
-              target = root / item['path']
-              target.parent.mkdir(parents=True, exist_ok=True)
-              target.write_bytes(data)
-              print(f"verified {item['path']} {len(data)} {digest}")
+              report.append({
+                  'index': index,
+                  'target': item['path'],
+                  'expected_sha256': item['sha256'],
+                  'expected_size': item['size'],
+                  'observed_sha256': digest,
+                  'observed_size': len(data),
+              })
+              (debug / f'{index:02d}.bin').write_bytes(data)
+          (debug / 'report.json').write_text(json.dumps(report, indent=2) + '\n')
 
-      - name: Remove bootstrap payload and commit durable artifacts
+      - name: Commit temporary reconstruction evidence
         run: |
-          rm -rf .import
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "Import qualified Draneka Breeder prototype artifacts"
+          git add .debug
+          git commit -m "Temporary bootstrap byte-comparison evidence"
           git push
