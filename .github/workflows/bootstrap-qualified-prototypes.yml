@@ -1,0 +1,51 @@
+name: Bootstrap qualified prototypes
+
+on:
+  push:
+    paths:
+      - '.import/READY'
+
+permissions:
+  contents: write
+
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Reassemble and verify qualified artifacts
+        shell: python
+        run: |
+          import base64
+          import hashlib
+          import json
+          from pathlib import Path
+
+          root = Path('.')
+          manifest = json.loads((root / '.import' / 'manifest.json').read_text())
+          for item in manifest['artifacts']:
+              data = b''.join(
+                  base64.b64decode((root / chunk).read_text().strip())
+                  for chunk in item['chunks']
+              )
+              digest = hashlib.sha256(data).hexdigest()
+              if digest != item['sha256']:
+                  raise SystemExit(f"SHA mismatch for {item['path']}: {digest} != {item['sha256']}")
+              if len(data) != item['size']:
+                  raise SystemExit(f"Size mismatch for {item['path']}: {len(data)} != {item['size']}")
+              target = root / item['path']
+              target.parent.mkdir(parents=True, exist_ok=True)
+              target.write_bytes(data)
+              print(f"verified {item['path']} {len(data)} {digest}")
+
+      - name: Remove bootstrap payload and commit durable artifacts
+        run: |
+          rm -rf .import
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Import qualified Draneka Breeder prototype artifacts"
+          git push
