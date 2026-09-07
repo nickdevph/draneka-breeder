@@ -1,0 +1,72 @@
+[
+  {
+    "index": 0,
+    "target": "prototypes/holistic/v0.2/DRANEKA-AQUARIUM-BREEDER-HOLISTIC-PROTOTYPE-V0.2.html",
+    "expected_sha256": "bb9eaafa8c6a65c7d87c3c57f1c8d436ab1f1e5c53adc90e3b5594e9f1791ea5",
+    "expected_size": 198241,
+    "status": "decode_error",
+    "error": "error('Error -3 while decompressing data: invalid distance too far back')"
+  },
+  {
+    "index": 1,
+    "target": "prototypes/holistic/v0.2/PROTOTYPE-RECEIPT.md",
+    "expected_sha256": "78b20a182548aa98322dff808574222285529f083bef77f7b5f0b6e2f2a498f9",
+    "expected_size": 2778,
+    "observed_sha256": "78b20a182548aa98322dff808574222285529f083bef77f7b5f0b6e2f2a498f9",
+    "observed_size": 2778,
+    "status": "decoded"
+  },
+  {
+    "index": 2,
+    "target": "prototypes/holistic/v0.2/QUALIFICATION.json",
+    "expected_sha256": "a491dfa5a0edb2bbb8452ce1309d76926a8ec9cbe2ca5441bdd7291ad97d73f1",
+    "expected_size": 2020,
+    "observed_sha256": "a491dfa5a0edb2bbb8452ce1309d76926a8ec9cbe2ca5441bdd7291ad97d73f1",
+    "observed_size": 2020,
+    "status": "decoded"
+  },
+  {
+    "index": 3,
+    "target": "prototypes/holistic/v0.2/RESEARCH-AND-DESIGN-NOTES.md",
+    "expected_sha256": "27e323241a7921aed9623e5cbc0b37c02d100f0fbf34a170b36ffdae08b4fbdb",
+    "expected_size": 6335,
+    "observed_sha256": "27e323241a7921aed9623e5cbc0b37c02d100f0fbf34a170b36ffdae08b4fbdb",
+    "observed_size": 6335,
+    "status": "decoded"
+  },
+  {
+    "index": 4,
+    "target": "prototypes/android/v0.1/DRANEKA-AQUARIUM-BREEDER-ANDROID-PROTOTYPE-V0.1.html",
+    "expected_sha256": "e38a44f9b2727c3d0303af1fa8c3adde3d56983b511f77bbef193e0fd6b7174b",
+    "expected_size": 70485,
+    "status": "decode_error",
+    "error": "error('Error -3 while decompressing data: invalid code lengths set')"
+  },
+  {
+    "index": 5,
+    "target": "prototypes/android/v0.1/PROTOTYPE-RECEIPT.md",
+    "expected_sha256": "cc0b9722ab817c5287f8d7699f5df33096a5f77873cf4ffc36d430ff879d928c",
+    "expected_size": 3144,
+    "observed_sha256": "cc0b9722ab817c5287f8d7699f5df33096a5f77873cf4ffc36d430ff879d928c",
+    "observed_size": 3144,
+    "status": "decoded"
+  },
+  {
+    "index": 6,
+    "target": "prototypes/android/v0.1/QUALIFICATION.json",
+    "expected_sha256": "0b74ddee973f355c22146d05e5b5c8c48d92090e7a9712225267d214a65c1337",
+    "expected_size": 554,
+    "observed_sha256": "0b74ddee973f355c22146d05e5b5c8c48d92090e7a9712225267d214a65c1337",
+    "observed_size": 554,
+    "status": "decoded"
+  },
+  {
+    "index": 7,
+    "target": "prototypes/android/v0.1/ADAPTATION-NOTES.md",
+    "expected_sha256": "208692456cb92036dc60c9a3bc482c3e84692a2191a6968e3cef93da8049ec1e",
+    "expected_size": 2012,
+    "observed_sha256": "208692456cb92036dc60c9a3bc482c3e84692a2191a6968e3cef93da8049ec1e",
+    "observed_size": 2012,
+    "status": "decoded"
+  }
+]

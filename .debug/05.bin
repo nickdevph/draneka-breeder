@@ -1,0 +1,60 @@
+# Draneka Aquarium Breeder — Android Prototype v0.1 Receipt
+
+`DRANEKA_AQUARIUM_BREEDER_ANDROID_PROTOTYPE = READY_FOR_INDEPENDENT_REVIEW`
+
+ARTIFACT_NAME: `DRANEKA-AQUARIUM-BREEDER-ANDROID-PROTOTYPE-V0.1.html`  
+ARTIFACT_PATH: `/mnt/data/DRANEKA-AQUARIUM-BREEDER-ANDROID-PROTOTYPE-V0.1.html`  
+SHA_256: `e38a44f9b2727c3d0303af1fa8c3adde3d56983b511f77bbef193e0fd6b7174b`  
+FILE_SIZE: `70485 bytes`  
+PROTOTYPE_VERSION: `Android v0.1`  
+HOLISTIC_PRODUCT_AUTHORITY_INPUT: `DRANEKA-AQUARIUM-BREEDER-HOLISTIC-PROTOTYPE-V0.2.html`  
+HOLISTIC_INPUT_SHA_256: `bb9eaafa8c6a65c7d87c3c57f1c8d436ab1f1e5c53adc90e3b5594e9f1791ea5`  
+JOURNAL_ANDROID_VISUAL_INPUT: `AF-ANDROID-JOURNAL-PROTOTYPE-0.9.6-DRANEKA-AQUARIUM-JOURNAL-BRANDING-CANDIDATE.html`  
+JOURNAL_ANDROID_INPUT_SHA_256: `f0e9d2951b840febd5939e33d48ee41881ebb7a08a0abdd1e1bdbcbfe1c742a1`  
+ANDROID_SOURCE_IMPLEMENTED: `NO`  
+PRODUCTION_MUTATION: `NO`
+
+## Android adaptation coverage
+
+- Android-style status/navigation insets and phone presentation
+- Android Back: close overlay first, route history second, exit confirmation at Breeder Home
+- contextual Breeder Quick Log as bottom sheet
+- Breeder Round execution and summary
+- Photo Picker-first media entry
+- camera permission requested only for new capture
+- contextual notification permission
+- notification deep links to exact breeder context
+- offline breeder write queue and single-result reconciliation
+- local draft restoration after process restart
+- fail-closed stale/unavailable breeder context
+- shared Journal event identity presentation
+- 360 / 390 / 430 mobile viewport behavior
+
+## Breeder Round authority boundary
+
+The Android prototype does **not** redesign the Breeder Round queue model. It inherits holistic Breeder v0.2:
+
+`ROUND_QUEUE = DUE_AND_OVERDUE_SCHEDULED_WORK + ROUTINE_ACTIVE_BREEDING_CONTEXTS`
+
+Context determines the available rapid actions. Consequential records such as counts, moves, splits and hatch records use structured forms.
+
+## Qualification
+
+Functional / Android behavior assertions: `68 / 68 PASS`  
+True mobile responsive route checks: `48 / 48 PASS`  
+Combined checks: `116 / 116 PASS`  
+Uncaught JavaScript errors: `0`  
+Unexpected external HTTP requests: `0`  
+Observed horizontal overflow findings: `0`
+
+## Known limitations
+
+- This is an interactive HTML Android design prototype, not an APK or Android source implementation.
+- Native Android APIs are simulated: Photo Picker, camera, notification permission, offline process death, and OS navigation are represented behaviorally.
+- No instrumentation test was run on an Android emulator/device because there is no Android Breeder implementation yet.
+- Backend persistence, real account synchronization, real notifications, and real Journal integration are not implemented.
+- The prototype intentionally inherits the holistic v0.2 round queue model rather than changing scheduling semantics.
+
+## Recommended next step
+
+Run a fresh independent Android product/design review of the exact prototype bytes. If PASS, promote this artifact only as Android Breeder design authority; Android implementation admission should be a separate bounded cycle.

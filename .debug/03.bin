@@ -1,0 +1,145 @@
+# Draneka Aquarium Breeder v0.2 — User-feedback revision notes
+
+## Revision objective
+
+v0.2 is a bounded product/UX revision of the v0.1 holistic Breeder prototype. It responds to the strongest recurring user-feedback pattern identified across aquarium app-store reviews and Reddit discussions: **record-keeping becomes too manual and repetitive once users have multiple tanks, repeated routines, or many animals/cohorts.**
+
+The revision does not replace the cohort/lineage model, redesign Draneka, change the selected Journal/Breeder relationship, or create production implementation authority.
+
+## User-feedback signal applied
+
+Public feedback reviewed for the preceding product assessment repeatedly described:
+
+- repeated manual entry and setup work in aquarium-management apps;
+- livestock/tank workflows becoming cumbersome as scale increases;
+- difficulty moving animals between tanks without re-entry in some products;
+- users abandoning apps after a small number of logs because of input friction;
+- breeders still using spreadsheets, notebooks, tank labels, stickers, or Post-it notes because those are faster in the fish room;
+- fragmented water, maintenance, breeding, and production records across separate tools.
+
+Representative sources used for the revision direction:
+
+- Aquarimate App Store reviews: https://apps.apple.com/us/app/aquarimate/id587215055?platform=iphone&see-all=reviews
+- Aquarium Manager App Store reviews: https://apps.apple.com/us/app/aquarium-manager-tank-log/id614505498?platform=iphone&see-all=reviews
+- r/Aquariums discussion on aquarium apps/manual logging: https://www.reddit.com/r/Aquariums/comments/136vncf/
+- r/Aquariums discussion on management apps: https://www.reddit.com/r/Aquariums/comments/1rpe7mv/do_you_use_an_aquarium_management_app/
+- r/shrimptank discussion on fragmented tank/breeding records: https://www.reddit.com/r/shrimptank/comments/1ugq7ts/
+
+These sources informed the problem statement. They are not product authority by themselves.
+
+## Product decision
+
+The selected correction is **Breeder Rounds**: a fish-room workflow above Quick Log that walks the breeder through relevant contexts with project/tank/cohort identity already attached.
+
+### Added in v0.2
+
+`BREEDER_ROUNDS = ADD`
+
+`ROUTINE_LOG_TARGET = ONE_TAP_WHERE_CONTEXT_IS_ALREADY_EXPLICIT`
+
+`REPEATED_CONTEXT_ENTRY = ELIMINATE_WITHIN_ROUND`
+
+`BULK_ROUTINE_FEED = ADD`
+
+`PHYSICAL_TANK_SHORTCUT = PROTOTYPE_AS_SAFE_LABEL_PICKER`
+
+`JOURNAL_DUPLICATE_ENTRY = PROHIBIT`
+
+`COHORT_AND_LINEAGE_MODEL = RETAIN`
+
+### Interaction model
+
+A round is assembled from:
+
+1. overdue breeder actions;
+2. today's breeder actions;
+3. active offspring cohorts that still benefit from a routine check;
+4. active egg/conditioning/pairing contexts.
+
+Each round item displays a locked context containing:
+
+- tank;
+- breeding project;
+- cohort where applicable;
+- stage;
+- current recorded count where applicable;
+- relevant Today/Overdue tasks.
+
+Routine actions can be one tap only when the prototype already has enough explicit context to avoid inventing data. For example, a cohort with a breeder-recorded feeding routine can use **Fed** without re-entering project, tank, cohort, food, and routine description.
+
+Actions that materially alter biological or inventory state still open structured forms. This includes:
+
+- hatch;
+- count;
+- mortality;
+- move;
+- split;
+- selection;
+- transfer/disposition.
+
+This prevents convenience from weakening cohort conservation or evidence semantics.
+
+## Undo model
+
+One-tap and bulk routine actions take a full local-state snapshot before mutation. **Undo** restores both the underlying record state and the round action ledger.
+
+The prototype therefore tests the intended interaction rule:
+
+> fast routine confirmation must remain reversible without creating hidden duplicate or partial records.
+
+## Bulk action boundary
+
+v0.2 prototypes **Bulk routine feed** for living cohorts with an already recorded routine. The breeder explicitly selects the cohorts that were actually fed. The action creates one shared care event per selected cohort.
+
+The prototype deliberately does not provide bulk mortality, bulk count correction, bulk hatch, or bulk movement because those actions require context-specific evidence and/or inventory reconciliation.
+
+## Physical tank shortcut
+
+v0.2 adds a **Tank label shortcut** as a safe prototype for future QR/OCR access. It does not request camera permission. Selecting a tank label scopes the round to breeder contexts physically associated with that tank.
+
+A production implementation could later evaluate QR/OCR, but that is not admitted by this prototype.
+
+## Journal integration rule retained
+
+A routine feed recorded through Breeder Rounds uses the same underlying shared care-event model as Journal. It is not copied into a second Journal event.
+
+Breeder-only observations remain breeder records. The distinction is visible in the round summary:
+
+- `Shared care events` — visible in Journal and Breeder;
+- `Breeder observations` — breeder-specific evidence/context.
+
+## What was intentionally not changed
+
+- Draneka branding and v0.9.6-derived visual language;
+- workspace-switcher/hybrid Journal relationship;
+- Breeding Project as the central workflow object;
+- exact vs estimated cohort counts;
+- mortality versus unexplained adjustment separation;
+- split quantity conservation;
+- frozen spawn ancestry;
+- explicit unknown parentage;
+- breeder-intelligence evidence language;
+- commerce-secondary boundary;
+- technical identity remaining AquaticFinder.
+
+## Producer qualification result
+
+Artifact SHA-256: `bb9eaafa8c6a65c7d87c3c57f1c8d436ab1f1e5c53adc90e3b5594e9f1791ea5`
+
+Artifact size: `198,241 bytes`
+
+Functional assertions: **100/100 PASS**
+
+Responsive render checks: **120**
+
+Uncaught JavaScript errors: **0**
+
+Unexpected HTTP requests: **0**
+
+Horizontal overflow findings: **0**
+
+The round-specific test suite verifies one-tap logging, Undo, no-hatch semantics, non-mortality observations, context inheritance, Journal event identity, tank-label scoping, bulk feed, and atomic bulk Undo.
+
+## Recommended next step
+
+Fresh independent product/design review of the exact v0.2 bytes. The reviewer should specifically challenge whether Breeder Rounds meaningfully reduces fish-room friction without making records ambiguous or overly automatic.
