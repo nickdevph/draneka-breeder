@@ -29,6 +29,7 @@ jobs:
           manifest = json.loads((root / '.import' / 'manifest.json').read_text())
           for item in manifest['artifacts']:
               encoded = ''.join((root / chunk).read_text().strip() for chunk in item['chunks'])
+              encoded += '=' * (-len(encoded) % 4)
               payload = base64.b64decode(encoded)
               data = gzip.decompress(payload) if item.get('encoding') == 'gzip+base64' else payload
               digest = hashlib.sha256(data).hexdigest()
