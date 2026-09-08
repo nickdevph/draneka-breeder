@@ -45,6 +45,23 @@ Lineage rules include:
 - phenotype does not imply genotype;
 - only a reproductive event advances ancestry/generation.
 
+## Current durable product research and roadmap
+
+The current research direction broadens the operating model around the **Breeding Program** while preserving the v0.3 lineage authority.
+
+- Founder scope/commerce/iteration decision: `decisions/0003-breeder-scope-commerce-boundary-and-iteration-strategy.md`
+- Breeder-needs + species-program research: `research/2026-09-08-breeder-needs-and-species-programs.md`
+- Bounded prototype roadmap: `roadmap/PROTOTYPE-ITERATION-ROADMAP.md`
+- Draneka Breeder -> Draneka AquaticFinder commerce boundary: `integrations/DRANEKA-AQUATICFINDER-COMMERCE-HANDOFF.md`
+
+Planned prototype sequence after v0.3:
+
+`v0.4 Program backbone -> v0.5 Cohort operations -> v0.6 Species-aware programs -> v0.7 Selection/line development -> v0.8 Operational scale -> v0.9 Commerce handoff/evidence -> v1.0 simplify/qualify`
+
+The species-program architecture is **one stable breeding core plus species/reproductive overlays**. Initial research covers Betta splendens, fancy guppy/livebearers, medaka, killifish, Neocaridina shrimp, and Apistogramma-type cave brooders. A second research wave is tracked in GitHub issue #2.
+
+Commerce-channel operations are explicitly owned by **Draneka AquaticFinder**, not Breeder. Breeder prepares sale-ready individuals/batches and provenance; AquaticFinder owns marketplace eligibility, listings, quantity/channel management, and marketplace-specific policy/compliance.
+
 ## Authority rules
 
 1. Reviewed/promoted prototype versions are immutable; revisions use new version numbers.
@@ -53,6 +70,7 @@ Lineage rules include:
 4. Android v0.1 cannot claim parity with holistic v0.3 until lineage convergence is explicitly performed and reviewed.
 5. Journal and Breeder may share account, tank, livestock, water, media, and event identity concepts; duplicate domain events should be avoided.
 6. Production backend/API/schema/database/deployment changes require a separate implementation-admission cycle.
+7. Durable research/roadmap documents inform future prototypes but do not themselves promote prototype authority.
 
 ## Current implementation state
 
