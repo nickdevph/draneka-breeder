@@ -14,71 +14,67 @@ This repository preserves prototype authority, product/design evidence, qualific
 
 | Surface | Current authority | Status |
 | --- | --- | --- |
-| Holistic product/design | **v0.3 lineage** | **Founder-promoted canonical** |
-| Holistic candidate | **v0.4 core stress test** | **Ready for independent review; non-canonical** |
-| Android adaptation | Android v0.1, derived from holistic v0.2 | Historical/current Android design evidence; **not v0.3 lineage parity** |
-| Holistic predecessor | v0.2 Breeder Rounds | Superseded as current holistic authority; retained for provenance |
+| Holistic product/design | **v0.4 bounded-correction authority** | **Founder-promoted canonical** |
+| Holistic successor | **v0.5 cohort / egg-batch / population operations** | **Authorized for prototype iteration; non-canonical until separately reviewed/promoted** |
+| Android adaptation | Android v0.1, derived from holistic v0.2 | Historical Android design evidence; **not v0.4 parity** |
+| Holistic predecessor | v0.3 lineage | Superseded as current holistic authority; retained immutably for lineage/provenance |
 
-Exact v0.3 authority binding:
+### Exact canonical v0.4 binding
 
-- Artifact: `DRANEKA-AQUARIUM-BREEDER-HOLISTIC-PROTOTYPE-V0.3.html`
-- SHA-256: `a1432480caefa231b08435464e1bd53f606788817bd39c3738687153667548c4`
-- Size: `218919 bytes`
-- Durable Drive object: `1uR58MSOE3_B6P7BwTBEUHMxAaKX-pElv`
-- Authority record: `prototypes/holistic/v0.3/AUTHORITY.md`
-- Founder decision: `decisions/0002-promote-holistic-v0.3-lineage.md`
+- Artifact: `DRANEKA-AQUARIUM-BREEDER-HOLISTIC-PROTOTYPE-V0.4-BOUNDED-CORRECTION-CANDIDATE.html`
+- SHA-256: `4f82843586c630d3e7542def1632feb8e5c5e766b7d9909e8e41d69b41163a16`
+- Size: `242549 bytes`
+- Durable Drive object: `19EXK4Gh5Da2_W_5HuUU-ws7feON7qMV7`
+- Authority record: `prototypes/holistic/v0.4/AUTHORITY.md`
+- Independent review: `reviews/2026-09-08-independent-v0.4-bounded-correction-review.md`
+- Founder decision: `decisions/0005-promote-holistic-v0.4.md`
 
-Current v0.4 candidate binding:
+Terminal authority state:
 
-- Artifact: `DRANEKA-AQUARIUM-BREEDER-HOLISTIC-PROTOTYPE-V0.4-CANDIDATE.html`
-- SHA-256: `31fed7d432ab80151a192991744f8957dda157e96a03d0e6d40a94900b6b1bbc`
-- Size: `235203 bytes`
-- Durable Drive object: `1OI8GqmNVINsYQ2BqiuXyPgaFWgf1ZMv6`
-- Candidate record: `prototypes/holistic/v0.4/CANDIDATE.md`
-- Producer validation: `prototypes/holistic/v0.4/VALIDATION.md`
-- Status: **READY_FOR_INDEPENDENT_REVIEW / NON-CANONICAL**
+`DRANEKA_BREEDER_CANONICAL_HOLISTIC_PRODUCT_DESIGN_AUTHORITY = V0.4`
 
-## Product direction locked by holistic v0.3
+`DRANEKA_BREEDER_V0_4_BOUNDED_CORRECTION_INDEPENDENT_REVIEW = PASS`
 
-Breeder remains a breeder-first product with a required web application and a dedicated Android client direction. Holistic v0.3 retains Breeder Rounds and the cohort-first operating model and adds the canonical lineage loop:
+`DRANEKA_BREEDER_V0_4_FOUNDER_PROMOTION = APPROVED`
 
-`Spawn -> Cohort -> Selection -> Breeding Stock -> Pairing Check -> Next Reproductive Event`
+## Canonical product rules inherited from v0.3 and qualified in v0.4
 
-Lineage rules include:
+Breeder remains a breeder-first product with a required web application direction and a dedicated Android client direction. v0.4 preserves the v0.3 lineage loop while generalizing the operating model so pair/spawn semantics are not forced onto every breeder workflow.
 
-- ancestry is derived from recorded reproductive events rather than manually maintained;
-- cohorts carry lineage;
-- cohort splits preserve ancestry but do not create a new generation;
-- selected/promoted breeders inherit ancestry automatically;
-- Pair Builder checks known relatedness and shows common-ancestor paths;
-- incomplete records use `No known common ancestor`, never a false `unrelated` claim;
-- unknown sire/mother and group-spawn parentage are first-class;
+Core lineage/provenance rules:
+
+- ancestry is derived from recorded reproductive evidence rather than manually asserted;
+- exact parents remain exact only where recorded evidence supports them;
+- incomplete, group, population, or unknown ancestry remains explicitly incomplete;
+- offspring groups preserve reproductive source and source-hatch provenance through downstream operations;
+- splits preserve ancestry/provenance and do not create a new generation;
+- tanks are locations/environmental context, not lineage owners;
+- selected/promoted breeders inherit the evidence actually known about their origin;
 - phenotype does not imply genotype;
-- only a reproductive event advances ancestry/generation.
+- only a reproductive event can advance ancestry/generation semantics.
+
+v0.4 additionally locks:
+
+- Breeding Program is lightweight durable context, not mandatory ceremony before breeder-native actions;
+- event-first Program creation is atomic with the initiating biological record;
+- Medaka may have multiple independent egg batches and repeated partial hatches from one source batch;
+- hatch source selection is explicit when multiple egg batches are open;
+- Neocaridina and other population-derived stock retain source-population provenance without fabricated sire/dam or forced Pair Builder history;
+- suggestion, scheduled action, completed action, observation, and derived state remain distinct;
+- routine working surfaces use breeder-native language and preserve the anti-overwhelm information budget.
 
 ## Current durable product research and roadmap
 
-The current research direction broadens the operating model beyond tank ownership while preserving the v0.3 lineage authority.
-
 - Founder scope/commerce/iteration decision: `decisions/0003-breeder-scope-commerce-boundary-and-iteration-strategy.md`
-- Independent-review correction decision: `decisions/0004-accept-independent-research-review-corrections.md`
+- Independent-review research correction decision: `decisions/0004-accept-independent-research-review-corrections.md`
+- v0.4 promotion decision: `decisions/0005-promote-holistic-v0.4.md`
 - Breeder-needs + species-program research: `research/2026-09-08-breeder-needs-and-species-programs.md`
 - Bounded prototype roadmap: `roadmap/PROTOTYPE-ITERATION-ROADMAP.md`
 - Draneka Breeder -> Draneka AquaticFinder commerce boundary: `integrations/DRANEKA-AQUATICFINDER-COMMERCE-HANDOFF.md`
 
-Independent review disposition:
+Planned sequence from the current authority:
 
-`DRANEKA_BREEDER_RESEARCH_REVIEW = PASS_WITH_CORRECTIONS`
-
-Founder disposition:
-
-`PROCEED_TO_V0_4 = YES_WITH_CORRECTIONS`
-
-The accepted correction is that **Breeding Program remains durable context but must not become mandatory ceremony**. The neutral core must support pair/group/population/unknown parentage and spawn/drop/egg-batch/recruitment-type reproductive outputs without false normalization.
-
-Planned prototype sequence after v0.3:
-
-`v0.4 Lightweight Program context + Betta/Medaka/Neocaridina core stress test`
+`v0.4 canonical`
 
 `-> v0.5 Cohort / egg-batch / population operations`
 
@@ -92,7 +88,19 @@ Planned prototype sequence after v0.3:
 
 `-> v1.0 Simplify / qualify`
 
-The species-program architecture remains **one stable breeding core plus species/reproductive overlays**, provisionally accepted subject to architectural stress testing. Research wave 2 is prioritized by reproductive modes most likely to break the core rather than by species popularity; see GitHub issue #2.
+## v0.5 successor envelope
+
+The authorized v0.5 prototype asks one primary question:
+
+**Can the breeder manage dozens or hundreds of offspring, eggs, or recruits without individual-record overhead or ancestry loss?**
+
+It may prove count/estimate with uncertainty, move, split, lineage-safe merge, life-stage change, loss/mortality adjustment, photo/observation, quick care events, promotion of selected offspring, pre-hatch egg-batch -> downstream group, multiple hatch observations from one egg batch, partial hatch, and population recruitment where exact cohort assignment is unavailable.
+
+A merge of offspring groups must preserve all relevant source provenance or be rejected as ancestry-destructive.
+
+Detailed grading systems, multi-channel commerce, broad reports, sophisticated capacity projection, and full species-overlay UI remain deferred.
+
+## Product / commerce boundary
 
 The product must explicitly distinguish:
 
@@ -100,35 +108,23 @@ The product must explicitly distinguish:
 
 A completed check or expected lifecycle milestone must never create a biological fact without evidence.
 
-Commerce-channel operations are explicitly owned by **Draneka AquaticFinder**, not Breeder. Breeder owns biological identity/count/provenance and sale-ready intent. AquaticFinder owns commercial allocation, marketplace/channel quantities, listings, reservations/orders, and policy/compliance state. Accepted commercial outcomes may flow back without rewriting breeding history.
-
-## Current candidate work state
-
-GitHub issue #1 now contains the exact v0.4 candidate binding and remains open for independent review/correction.
-
-Producer disposition:
-
-`HOLISTIC_V0_4_CANDIDATE_VALIDATION = PASS`
-
-Next gate:
-
-`HOLISTIC_V0_4_INDEPENDENT_REVIEW = REQUIRED`
+Commerce-channel operations are owned by **Draneka AquaticFinder**, not Breeder. Breeder owns biological identity/count/provenance and sale-ready intent. AquaticFinder owns commercial allocation, marketplace/channel quantities, listings, reservations/orders, and policy/compliance state. Accepted commercial outcomes may flow back without rewriting breeding history.
 
 ## Authority rules
 
 1. Reviewed/promoted prototype versions are immutable; revisions use new version numbers.
 2. A newer holistic prototype does not silently amend an implementation cycle.
 3. Holistic product semantics are separate from client-specific Android/web adaptation details.
-4. Android v0.1 cannot claim parity with holistic v0.3 until lineage convergence is explicitly performed and reviewed.
+4. Existing Android evidence cannot claim parity with holistic v0.4 until convergence is explicitly performed and reviewed.
 5. Journal and Breeder may share account, tank, livestock, water, media, and event identity concepts; duplicate domain events should be avoided.
 6. Production backend/API/schema/database/deployment changes require a separate implementation-admission cycle.
 7. Durable research/roadmap documents inform future prototypes but do not themselves promote prototype authority.
-8. `decisions/0004-accept-independent-research-review-corrections.md` governs future prototype planning where it narrows or clarifies the earlier research direction; it does not amend the byte-bound v0.3 prototype itself.
+8. Successor prototypes must preserve the evidence, uncertainty, lineage/provenance, tank-location, fact/action, and anti-overwhelm guarantees of the canonical predecessor unless a separate founder decision explicitly changes them.
 
 ## Current implementation state
 
-- Breeder web production implementation: **not started/admitted by this prototype promotion**
-- Breeder Android source implementation: **not started/admitted by this prototype promotion**
+- Breeder web production implementation: **not admitted by v0.4 promotion**
+- Breeder Android source implementation: **not admitted by v0.4 promotion**
 - Existing Journal Android implementation authority: **unchanged**
 
 The prototype repository is product/design authority and provenance, not automatic production implementation authority.
