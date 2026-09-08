@@ -95,3 +95,63 @@ HOLISTIC_V0_6_READY_FOR_FRESH_INDEPENDENT_REVIEW = YES
 HOLISTIC_V0_6_CANONICAL = NO
 
 A fresh independent reviewer must bind and exercise the exact corrected Drive bytes. This producer receipt does not replace the preserved independent review and does not claim independent-review PASS.
+
+
+## Latest responsive-corrected candidate validation
+
+Date: 2026-09-08
+Candidate: `DRANEKA-AQUARIUM-BREEDER-HOLISTIC-PROTOTYPE-V0.6-RESPONSIVE-CORRECTED-CANDIDATE.html`
+PR head: `10a581d6108280f138cfda33b27a5a1508407d6d`
+Google Drive ID: `1iLH7iU_2Ik6k37Y-eL9C0qfQmrqi30e_`
+Google Drive URL: `https://drive.google.com/file/d/1iLH7iU_2Ik6k37Y-eL9C0qfQmrqi30e_/view`
+Size: `295505 bytes`
+SHA-256: `bc0ef50c26c96614574fbfd14f18f88dab2a98b99ab2b222ea3e5624059a9c70`
+
+A new Drive object was uploaded; the raw Drive download was re-downloaded and hashed independently. It measured 295505 bytes and matched the local candidate SHA-256 exactly. The predecessor corrected Drive object `1BnnOxiojKI04HjBtjnvjeUpYV9cdLs24` remains untouched.
+
+### Bounded correction
+
+The candidate differs from the predecessor corrected candidate only by the following second style block before `</head>`:
+
+```css
+@media (max-width:420px) {
+  .splash-card { min-width:0; max-width:100%; }
+  .splash-visual { margin-left:0; margin-right:0; gap:6px; }
+  .splash-node { min-width:0; flex:1; width:auto; }
+}
+```
+
+Static JavaScript compilation, six required species presence, mop/plant presence, structured wetting/re-drying/attempt provenance, and bounded-diff assertions passed.
+
+### Cloud-browser functional evidence
+
+The exact candidate was served through a temporary local preview using the site preview runtime. A separate browser context at its fixed 1363 x 936 viewport:
+
+- loaded the candidate and rendered the breeder shell;
+- opened Programs;
+- opened all seven seeded program surfaces (Betta, Medaka, Corydoras, Neocaridina, Nothobranchius rachovii, Apistogramma, and guppy);
+- confirmed the killifish Annual / soil and Mop / plant surfaces;
+- opened the Mop / plant egg-batch form and confirmed date, batch, count basis, and collection/holding notes fields;
+- confirmed the persisted annual state retains Attempt 1, re-drying, Attempt 2, distinct hatch provenance, and the explicit no-inference language;
+- observed zero app-origin console errors;
+- observed no horizontal overflow at the available 1363px viewport (document/body width 1348px versus inner width 1363px).
+
+The producer browser run separately created the repeated annual sequence by recording wetting attempt 1, re-drying it, recording wetting attempt 2, and recording a hatch explicitly linked to attempt 2. The independent tab verified that stored state without adding a second biological event.
+
+### Responsive gate
+
+The required exact widths 320, 390, 768, and 1440px were not executable. The cloud browser runtime starts at a fixed 1363 x 936 viewport and its documented API has no viewport setter. The local environment reports Playwright installed but provides no agent-browser CLI or executable Chromium/Chrome/Firefox/WebKit. Therefore the responsive matrix is **NOT RUN**, not inferred from static CSS and not reported as PASS.
+
+`HOLISTIC_V0_6_LATEST_CANDIDATE_PRODUCED = YES`
+
+`HOLISTIC_V0_6_STATIC_AND_DRIVE_VALIDATION = PASS`
+
+`HOLISTIC_V0_6_BROWSER_FUNCTIONAL_VALIDATION = PASS_AT_1363PX`
+
+`HOLISTIC_V0_6_RESPONSIVE_VALIDATION = NOT_RUN_EXTERNAL_RUNTIME_BLOCKER`
+
+`HOLISTIC_V0_6_READY_FOR_INDEPENDENT_REVIEW = INCOMPLETE`
+
+`HOLISTIC_V0_6_CANONICAL = NO`
+
+`PR_6_MERGE = HOLD`

@@ -160,3 +160,38 @@ The original producer receipt remains in `prototypes/holistic/v0.6/VALIDATION.md
 `HOLISTIC_V0_6_CANONICAL = NO`
 
 A fresh independent reviewer must bind and exercise these exact bytes without inheriting the producer PASS decision.
+
+
+## Latest bounded correction binding — narrow-mobile responsive candidate
+
+Date: 2026-09-08
+Supersedes the prior corrected candidate as the current v0.6 review target. The prior corrected Drive object remains immutable and preserved.
+
+- Artifact: `DRANEKA-AQUARIUM-BREEDER-HOLISTIC-PROTOTYPE-V0.6-RESPONSIVE-CORRECTED-CANDIDATE.html`
+- Repository path: `prototypes/holistic/v0.6/DRANEKA-AQUARIUM-BREEDER-HOLISTIC-PROTOTYPE-V0.6-RESPONSIVE-CORRECTED-CANDIDATE.html`
+- PR head containing artifact: `10a581d6108280f138cfda33b27a5a1508407d6d`
+- Google Drive ID: `1iLH7iU_2Ik6k37Y-eL9C0qfQmrqi30e_`
+- Google Drive URL: `https://drive.google.com/file/d/1iLH7iU_2Ik6k37Y-eL9C0qfQmrqi30e_/view`
+- Exact size: `295505 bytes`
+- SHA-256: `bc0ef50c26c96614574fbfd14f18f88dab2a98b99ab2b222ea3e5624059a9c70`
+
+This is a new immutable Drive object. A fresh raw download matched the local candidate byte-for-byte, including the exact size and SHA-256 above. The only change from the prior corrected candidate is one bounded responsive CSS block for the splash card at widths up to 420px: it removes the card's minimum width, constrains the visual to the card, and lets the three splash nodes flex within the available width. No product data, biological model, event semantics, or later-version scope was changed.
+
+## Latest qualification state
+
+- Static syntax, species, scope, and bounded-diff checks: **PASS**.
+- Real-browser functional check in the cloud preview at its fixed 1363 x 936 viewport: **PASS** for initial load, Programs navigation, all seven seeded program detail surfaces, both killifish method surfaces, mop/plant collection form, and the annual attempt/re-dry/second-attempt/hatch provenance path.
+- App-origin console errors in the independent cloud-tab checks: **0**.
+- Exact responsive matrix at 320 / 390 / 768 / 1440 px: **NOT RUN**. The available cloud browser exposes no viewport-setting API, and the local environment has Playwright installed but no executable browser or agent-browser CLI. The fixed 1363px result is not substituted for the required matrix.
+
+`HOLISTIC_V0_6_LATEST_CANDIDATE = RESPONSIVE_CORRECTED`
+
+`HOLISTIC_V0_6_STATIC_AND_DRIVE_VALIDATION = PASS`
+
+`HOLISTIC_V0_6_BROWSER_FUNCTIONAL_VALIDATION = PASS_AT_1363PX`
+
+`HOLISTIC_V0_6_RESPONSIVE_MATRIX = NOT_RUN_EXTERNAL_RUNTIME_BLOCKER`
+
+`HOLISTIC_V0_6_CANONICAL = NO`
+
+`PR_6_MERGE = HOLD`
