@@ -15,6 +15,7 @@ This repository preserves prototype authority, product/design evidence, qualific
 | Surface | Current authority | Status |
 | --- | --- | --- |
 | Holistic product/design | **v0.3 lineage** | **Founder-promoted canonical** |
+| Holistic candidate | **v0.4 core stress test** | **Ready for independent review; non-canonical** |
 | Android adaptation | Android v0.1, derived from holistic v0.2 | Historical/current Android design evidence; **not v0.3 lineage parity** |
 | Holistic predecessor | v0.2 Breeder Rounds | Superseded as current holistic authority; retained for provenance |
 
@@ -26,6 +27,16 @@ Exact v0.3 authority binding:
 - Durable Drive object: `1uR58MSOE3_B6P7BwTBEUHMxAaKX-pElv`
 - Authority record: `prototypes/holistic/v0.3/AUTHORITY.md`
 - Founder decision: `decisions/0002-promote-holistic-v0.3-lineage.md`
+
+Current v0.4 candidate binding:
+
+- Artifact: `DRANEKA-AQUARIUM-BREEDER-HOLISTIC-PROTOTYPE-V0.4-CANDIDATE.html`
+- SHA-256: `31fed7d432ab80151a192991744f8957dda157e96a03d0e6d40a94900b6b1bbc`
+- Size: `235203 bytes`
+- Durable Drive object: `1OI8GqmNVINsYQ2BqiuXyPgaFWgf1ZMv6`
+- Candidate record: `prototypes/holistic/v0.4/CANDIDATE.md`
+- Producer validation: `prototypes/holistic/v0.4/VALIDATION.md`
+- Status: **READY_FOR_INDEPENDENT_REVIEW / NON-CANONICAL**
 
 ## Product direction locked by holistic v0.3
 
@@ -91,9 +102,17 @@ A completed check or expected lifecycle milestone must never create a biological
 
 Commerce-channel operations are explicitly owned by **Draneka AquaticFinder**, not Breeder. Breeder owns biological identity/count/provenance and sale-ready intent. AquaticFinder owns commercial allocation, marketplace/channel quantities, listings, reservations/orders, and policy/compliance state. Accepted commercial outcomes may flow back without rewriting breeding history.
 
-Current next work item:
+## Current candidate work state
 
-- GitHub issue #1 — **Prototype v0.4 — Lightweight Program context + 3-archetype core stress test**
+GitHub issue #1 now contains the exact v0.4 candidate binding and remains open for independent review/correction.
+
+Producer disposition:
+
+`HOLISTIC_V0_4_CANDIDATE_VALIDATION = PASS`
+
+Next gate:
+
+`HOLISTIC_V0_4_INDEPENDENT_REVIEW = REQUIRED`
 
 ## Authority rules
 
