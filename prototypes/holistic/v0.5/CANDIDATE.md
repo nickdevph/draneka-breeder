@@ -1,7 +1,7 @@
 # Draneka Aquarium Breeder — Holistic v0.5 Candidate
 
 Date: 2026-09-08
-Status: **READY_FOR_INDEPENDENT_REVIEW / NON-CANONICAL**
+Status: **READY_FOR_FOUNDER_PROMOTION / NON-CANONICAL**
 PR: `#4` — Holistic v0.5 — Cohort / egg-batch / population operations
 
 This record binds the first immutable holistic v0.5 candidate produced from the exact canonical v0.4 predecessor. Candidate creation and producer validation do not promote it. v0.4 remains canonical until the exact final v0.5 candidate independently passes, receives founder promotion, and PR #4 is merged to `main`.
@@ -90,6 +90,17 @@ The candidate also preserves Betta known-pair and Neocaridina population-derived
 - Tanks remain locations rather than lineage owners.
 - Suggestion, scheduled action, completed action, observation, and derived state remain distinct.
 
+## Independent review qualification
+
+The exact candidate passed a fresh independent review. The complete review receipt is recorded in `reviews/holistic-v0.5-independent-review-2026-09-08.md`.
+
+- `HOLISTIC_V0_5_INDEPENDENT_REVIEW = PASS`
+- `HOLISTIC_V0_5_CORRECTION_REQUIRED = NO`
+- `HOLISTIC_V0_5_READY_FOR_FOUNDER_PROMOTION = YES`
+- No unresolved BLOCKER or MAJOR promotion-blocking findings.
+
+Founder promotion is still separate and must apply to these exact bytes. v0.5 remains non-canonical until that promotion and the later merge of PR #4.
+
 ## Producer qualification
 
 Producer validation is recorded in `prototypes/holistic/v0.5/VALIDATION.md`.
@@ -99,7 +110,8 @@ Producer validation is recorded in `prototypes/holistic/v0.5/VALIDATION.md`.
 `HOLISTIC_V0_5_PRODUCER_VALIDATION = PASS`
 
 `HOLISTIC_V0_5_READY_FOR_INDEPENDENT_REVIEW = YES`
-
+`HOLISTIC_V0_5_INDEPENDENT_REVIEW = PASS`
+`HOLISTIC_V0_5_READY_FOR_FOUNDER_PROMOTION = YES`
 `HOLISTIC_V0_5_CANONICAL = NO`
 
-Fresh independent review of this exact SHA-256-bound artifact is required. Any correction must remain inside PR #4 and produce a new immutable candidate binding.
+No correction was required. If a later correction is authorized, it must remain inside PR #4 and produce a new immutable candidate binding.
