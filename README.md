@@ -15,7 +15,7 @@ This repository preserves prototype authority, product/design evidence, qualific
 | Surface | Current authority | Status |
 | --- | --- | --- |
 | Holistic product/design | **v0.4 bounded-correction authority** | **Founder-promoted canonical** |
-| Holistic successor | **v0.5 cohort / egg-batch / population operations** | **Authorized for prototype iteration; non-canonical until separately reviewed/promoted** |
+| Holistic successor | **v0.5 cohort / egg-batch / population operations** | **Authorized for prototype iteration; non-canonical until separately reviewed/promoted and merged** |
 | Android adaptation | Android v0.1, derived from holistic v0.2 | Historical Android design evidence; **not v0.4 parity** |
 | Holistic predecessor | v0.3 lineage | Superseded as current holistic authority; retained immutably for lineage/provenance |
 
@@ -36,6 +36,25 @@ Terminal authority state:
 `DRANEKA_BREEDER_V0_4_BOUNDED_CORRECTION_INDEPENDENT_REVIEW = PASS`
 
 `DRANEKA_BREEDER_V0_4_FOUNDER_PROMOTION = APPROVED`
+
+## Prototype iteration workflow
+
+Beginning with holistic v0.5, every holistic version uses **one iteration branch and one pull request**.
+
+- `main` = canonical or historical authority only.
+- Active holistic iteration work stays on `prototype/vX.Y-*` until it passes review, receives founder promotion, and is merged.
+- Bounded corrections discovered during review remain in the **same version PR** and create new immutable candidate bindings rather than mutating a reviewed artifact.
+- A new holistic version receives a new branch and a new PR.
+- For v0.5 and later, **merge to `main` after founder promotion is the repository canonicalization event**.
+
+The exact artifact SHA-256 remains the byte-level product/design payload authority. GitHub `main` records which byte-bound artifact currently holds canonical authority.
+
+Governing documents:
+
+- `decisions/0006-prototype-iteration-pr-canonicalization-model.md`
+- `PROTOTYPE-ITERATION-WORKFLOW.md`
+
+v0.4 is the transition exception because it was already independently reviewed and founder-promoted before this model was adopted; no synthetic retroactive PR is required.
 
 ## Canonical product rules inherited from v0.3 and qualified in v0.4
 
@@ -68,6 +87,7 @@ v0.4 additionally locks:
 - Founder scope/commerce/iteration decision: `decisions/0003-breeder-scope-commerce-boundary-and-iteration-strategy.md`
 - Independent-review research correction decision: `decisions/0004-accept-independent-research-review-corrections.md`
 - v0.4 promotion decision: `decisions/0005-promote-holistic-v0.4.md`
+- Prototype iteration PR model: `decisions/0006-prototype-iteration-pr-canonicalization-model.md`
 - Breeder-needs + species-program research: `research/2026-09-08-breeder-needs-and-species-programs.md`
 - Bounded prototype roadmap: `roadmap/PROTOTYPE-ITERATION-ROADMAP.md`
 - Draneka Breeder -> Draneka AquaticFinder commerce boundary: `integrations/DRANEKA-AQUATICFINDER-COMMERCE-HANDOFF.md`
@@ -120,6 +140,8 @@ Commerce-channel operations are owned by **Draneka AquaticFinder**, not Breeder.
 6. Production backend/API/schema/database/deployment changes require a separate implementation-admission cycle.
 7. Durable research/roadmap documents inform future prototypes but do not themselves promote prototype authority.
 8. Successor prototypes must preserve the evidence, uncertainty, lineage/provenance, tank-location, fact/action, and anti-overwhelm guarantees of the canonical predecessor unless a separate founder decision explicitly changes them.
+9. Beginning with v0.5, holistic iteration work must remain off `main` until the exact reviewed artifact is founder-promoted and the version PR is merged.
+10. One holistic version uses one branch and one PR; bounded review corrections stay in that PR.
 
 ## Current implementation state
 
