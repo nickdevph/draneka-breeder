@@ -47,20 +47,53 @@ Lineage rules include:
 
 ## Current durable product research and roadmap
 
-The current research direction broadens the operating model around the **Breeding Program** while preserving the v0.3 lineage authority.
+The current research direction broadens the operating model beyond tank ownership while preserving the v0.3 lineage authority.
 
 - Founder scope/commerce/iteration decision: `decisions/0003-breeder-scope-commerce-boundary-and-iteration-strategy.md`
+- Independent-review correction decision: `decisions/0004-accept-independent-research-review-corrections.md`
 - Breeder-needs + species-program research: `research/2026-09-08-breeder-needs-and-species-programs.md`
 - Bounded prototype roadmap: `roadmap/PROTOTYPE-ITERATION-ROADMAP.md`
 - Draneka Breeder -> Draneka AquaticFinder commerce boundary: `integrations/DRANEKA-AQUATICFINDER-COMMERCE-HANDOFF.md`
 
+Independent review disposition:
+
+`DRANEKA_BREEDER_RESEARCH_REVIEW = PASS_WITH_CORRECTIONS`
+
+Founder disposition:
+
+`PROCEED_TO_V0_4 = YES_WITH_CORRECTIONS`
+
+The accepted correction is that **Breeding Program remains durable context but must not become mandatory ceremony**. The neutral core must support pair/group/population/unknown parentage and spawn/drop/egg-batch/recruitment-type reproductive outputs without false normalization.
+
 Planned prototype sequence after v0.3:
 
-`v0.4 Program backbone -> v0.5 Cohort operations -> v0.6 Species-aware programs -> v0.7 Selection/line development -> v0.8 Operational scale -> v0.9 Commerce handoff/evidence -> v1.0 simplify/qualify`
+`v0.4 Lightweight Program context + Betta/Medaka/Neocaridina core stress test`
 
-The species-program architecture is **one stable breeding core plus species/reproductive overlays**. Initial research covers Betta splendens, fancy guppy/livebearers, medaka, killifish, Neocaridina shrimp, and Apistogramma-type cave brooders. A second research wave is tracked in GitHub issue #2.
+`-> v0.5 Cohort / egg-batch / population operations`
 
-Commerce-channel operations are explicitly owned by **Draneka AquaticFinder**, not Breeder. Breeder prepares sale-ready individuals/batches and provenance; AquaticFinder owns marketplace eligibility, listings, quantity/channel management, and marketplace-specific policy/compliance.
+`-> v0.6 Species-aware overlays`
+
+`-> v0.7 Selection / line development`
+
+`-> v0.8 Dynamic Breeder Round / operational attention`
+
+`-> v0.9 Commerce handoff / evidence`
+
+`-> v1.0 Simplify / qualify`
+
+The species-program architecture remains **one stable breeding core plus species/reproductive overlays**, provisionally accepted subject to architectural stress testing. Research wave 2 is prioritized by reproductive modes most likely to break the core rather than by species popularity; see GitHub issue #2.
+
+The product must explicitly distinguish:
+
+`Suggestion -> Scheduled action -> Completed action -> Observation -> Derived state`
+
+A completed check or expected lifecycle milestone must never create a biological fact without evidence.
+
+Commerce-channel operations are explicitly owned by **Draneka AquaticFinder**, not Breeder. Breeder owns biological identity/count/provenance and sale-ready intent. AquaticFinder owns commercial allocation, marketplace/channel quantities, listings, reservations/orders, and policy/compliance state. Accepted commercial outcomes may flow back without rewriting breeding history.
+
+Current next work item:
+
+- GitHub issue #1 — **Prototype v0.4 — Lightweight Program context + 3-archetype core stress test**
 
 ## Authority rules
 
@@ -71,6 +104,7 @@ Commerce-channel operations are explicitly owned by **Draneka AquaticFinder**, n
 5. Journal and Breeder may share account, tank, livestock, water, media, and event identity concepts; duplicate domain events should be avoided.
 6. Production backend/API/schema/database/deployment changes require a separate implementation-admission cycle.
 7. Durable research/roadmap documents inform future prototypes but do not themselves promote prototype authority.
+8. `decisions/0004-accept-independent-research-review-corrections.md` governs future prototype planning where it narrows or clarifies the earlier research direction; it does not amend the byte-bound v0.3 prototype itself.
 
 ## Current implementation state
 
