@@ -1,7 +1,7 @@
 # Draneka Aquarium Breeder — Holistic v0.5 Iteration
 
 Date opened: 2026-09-08
-Status: **CANDIDATE PRODUCED / READY_FOR_INDEPENDENT_REVIEW / NON-CANONICAL**
+Status: **INDEPENDENT REVIEW PASS / READY_FOR_FOUNDER_PROMOTION / NON-CANONICAL**
 Branch: `prototype/v0.5-cohort-egg-batch-population-operations`
 PR: `#4` — Holistic v0.5 — Cohort / egg-batch / population operations
 
@@ -119,22 +119,25 @@ Completed:
 - candidate artifact produced;
 - exact bytes / SHA-256 / Drive object bound;
 - Drive round-trip rebound;
-- producer validation passed.
+- producer validation passed;
+- fresh independent review of the exact candidate passed;
+- no bounded correction was required.
 
 Remaining:
 
-- fresh independent review of the exact candidate;
-- bounded correction inside the same PR if required, with a new immutable candidate binding;
-- independent PASS on the final exact candidate;
-- founder promotion of that exact reviewed candidate;
+- separate founder promotion of the exact reviewed candidate;
 - merge of PR #4 to `main`, which is the repository canonicalization event.
 
 ## Exit criterion
 
 A breeder can maintain real grow-out, egg-batch, and population-derived offspring through moves, splits, merges, partial hatches, count/loss changes, life-stage changes, and promotion without losing lineage or drowning in forms.
 
-`HOLISTIC_V0_5_ITERATION = READY_FOR_INDEPENDENT_REVIEW`
+`HOLISTIC_V0_5_ITERATION = READY_FOR_FOUNDER_PROMOTION`
 
 `HOLISTIC_V0_5_PRODUCER_VALIDATION = PASS`
+
+`HOLISTIC_V0_5_INDEPENDENT_REVIEW = PASS`
+
+`HOLISTIC_V0_5_CORRECTION_REQUIRED = NO`
 
 `HOLISTIC_V0_5_CANONICAL = NO`
