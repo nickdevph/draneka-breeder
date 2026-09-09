@@ -210,3 +210,32 @@ A cached projection is disposable and rebuildable from append-only Breeder recor
 ## 9. API test contract
 
 The API suite must prove happy paths, retry idempotency, stale revision, concurrent split/merge, cross-user references, malformed provenance, quantity conservation, privacy, error recovery and committed readback. It must run against disposable Postgres and a deterministic Core-session test adapter; no production credentials are used.
+
+## 10. Parent/source context endpoint
+
+The foundation slice must expose the missing context creation command before an output can reference it:
+
+~~~text
+POST /api/v1/programs/:programId/parentage-contexts
+POST /api/v1/programs/:programId/stock
+~~~
+
+The stock endpoint is optional for the first exact-parent path but is admitted for the minimum breeder-stock membership contract. Both are owner-scoped and idempotent.
+
+Parentage context payload:
+
+~~~json
+{
+  "idempotencyKey": "stable-key",
+  "payload": {
+    "contextType": "EXACT_PAIR",
+    "evidenceStatus": "RECORDED",
+    "label": "Ember + Lyra",
+    "memberLivestockIds": ["same-owner-journal-livestock-uuid-1", "same-owner-journal-livestock-uuid-2"]
+  }
+}
+~~~
+
+The server rejects a claimed EXACT_PAIR when the supplied members do not resolve to the same authenticated owner or when the evidence does not support the claim. POPULATION, SOURCE_POPULATION and UNKNOWN contexts may omit exact livestock members.
+
+The stock endpoint accepts an individual Journal livestock reference or a group/population label. It creates Breeder membership context only; it does not create or mutate Journal livestock.
