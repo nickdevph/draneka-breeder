@@ -108,3 +108,33 @@ The Journal-owned account deletion/export/retention path must include breeder_* 
 ## 9. Non-effects
 
 This plan does not alter Journal PR #873, create a role, grant a privilege, run SQL or mutate any Supabase project. It is a security design and qualification contract only.
+
+## 10. Exact owner-scope binding contract
+
+The first implementation must use one named transaction context and one named helper:
+
+~~~text
+transaction setting = app.breeder_owner_user_id
+database helper = public.breeder_current_owner_user_id()
+~~~
+
+The helper returns UUID or NULL. It returns NULL when the setting is absent, blank or not a canonical UUID. It is owned by journal_migrator, has a fixed search_path, is not executable by PUBLIC, and is executable only as needed by breeder_runtime policy evaluation.
+
+The Breeder server sets the context only after Core-session verification, using a parameterized transaction-local call equivalent to:
+
+~~~sql
+SELECT set_config('app.breeder_owner_user_id', $1, true);
+~~~
+
+The value is never read from an end-user field. The transaction immediately verifies that public.breeder_current_owner_user_id() equals the owner resolved from the verified Core session. Every mutation and read includes the owner predicate as well as RLS.
+
+RLS policy shape is:
+
+~~~sql
+USING (owner_user_id = public.breeder_current_owner_user_id())
+WITH CHECK (owner_user_id = public.breeder_current_owner_user_id())
+~~~
+
+There are separate SELECT, INSERT and UPDATE policies; no FOR ALL policy. A missing or malformed setting therefore matches no row. The helper and role grants must be covered by the disposable-Postgres verifier before the schema is admitted.
+
+The runtime login is a real LOGIN role with session_user equal to current_user. SET ROLE, role inheritance into Journal capability roles, and client-side setting of the owner context are prohibited by the service boundary and tested as negative cases.
