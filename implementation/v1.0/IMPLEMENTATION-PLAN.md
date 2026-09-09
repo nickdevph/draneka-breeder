@@ -1,411 +1,204 @@
+
 # Draneka Aquarium Breeder v1.0 — Production Implementation Plan
 
-Date: 2026-09-09
-Status: **PLANNING / NO PRODUCTION MUTATION / NO SOURCE IMPLEMENTATION YET**
+Date: 2026-09-09  
+Status: **IMPLEMENTATION-READY PLANNING / NO PRODUCTION MUTATION / NO PRODUCTION SOURCE IMPLEMENTATION**
 
-## 1. Objective
+This plan is the execution contract for implementing the exact canonical holistic v1.0 product. It freezes the boundaries below so implementation can proceed without reopening foundational architecture.
 
-Implement the canonical holistic v1.0 Draneka Aquarium Breeder product as a production-capable application while preserving its reviewed biological, provenance, quantity, privacy and Journal/AquaticFinder boundaries.
+## 1. Exact product authority
 
-The implementation must converge to the canonical product/design authority rather than reinterpret it.
+~~~text
+ARTIFACT =
+DRANEKA-AQUARIUM-BREEDER-HOLISTIC-PROTOTYPE-V1.0-SIMPLIFY-QUALIFY-BOUNDED-CORRECTION-CANDIDATE.html
 
-Canonical authority:
+DRIVE_ID =
+1zpWYG4igEMRm_Bv2HZJMgKrfXhVwL8c0
 
-- Artifact: `DRANEKA-AQUARIUM-BREEDER-HOLISTIC-PROTOTYPE-V1.0-SIMPLIFY-QUALIFY-BOUNDED-CORRECTION-CANDIDATE.html`
-- Drive ID: `1zpWYG4igEMRm_Bv2HZJMgKrfXhVwL8c0`
-- Bytes: `458038`
-- SHA-256: `4746694d3c40ec03177fb07723248e3373963894c94e66061b676ae3dbc2ab5d`
-- Canonical merge: `1baee0e1b2a57f056dccc3c6db834b78f88cfede`
+BYTES = 458038
+SHA256 = 4746694d3c40ec03177fb07723248e3373963894c94e66061b676ae3dbc2ab5d
 
-## 2. Locked database decision
+CANONICAL_REPOSITORY = nickdevph/draneka-breeder
+CANONICAL_MERGE = 1baee0e1b2a57f056dccc3c6db834b78f88cfede
+HOLISTIC_V1_0_CANONICAL = YES
+~~~
 
-Decision 0008 is binding for this plan:
+The exact artifact behavior is product authority. This plan does not redesign it.
 
-```text
-BREEDER_PRODUCTION_DATABASE = EXISTING_JOURNAL_SUPABASE
+The independent v1.0 product review established the following implementation-facing behavior:
+
+- primary navigation is exactly Today / Programs / Log / Grow-out / More;
+- Program search has deterministic recovery;
+- quantity is singular and does not double-count scalar and structured hatch observations;
+- historical/materialized reproductive outputs cannot regain positive commerce authority;
+- split, merge, move, stage, loss and count semantics preserve quantity and provenance;
+- phenotype is observation, not genotype;
+- suggestions, scheduled actions, completed actions, observations and derived state remain distinct;
+- public/private media selection is explicit, including explicit zero-public-media;
+- commerce reconciliation never rewrites biological history;
+- representative Betta, Medaka, Neocaridina and annual-killifish workflows are evidence-bounded.
+
+## 2. Founder-locked database and repository boundary
+
+~~~text
+BREEDER_PRODUCTION_DATABASE_PROJECT = EXISTING_JOURNAL_SUPABASE
 JOURNAL_SUPABASE_PROJECT_REF = sjodccpuyaasljcunmug
 NEW_SUPABASE_PROJECT = NO
-CORE_SUPABASE = UNCHANGED
-```
+CORE_SUPABASE_PROJECT = UNCHANGED
 
-Breeder will share the existing Journal PostgreSQL database while remaining a separate logical domain.
+PHYSICAL_DATABASE_MIGRATION_AUTHORITY = nickdevph/aquaticfinder-journal
+BREEDER_PRODUCT_APPLICATION_AUTHORITY = nickdevph/draneka-breeder
+~~~
 
-## 3. Repository and authority split
+Core remains a separate persistence boundary for account, profile, identity and session authority. Journal remains the physical PostgreSQL home for Journal-owned data and future Breeder-owned data. No cross-database foreign keys or cross-database transactions are introduced.
 
-### `nickdevph/draneka-breeder`
+Decision 0008 is the locked architecture decision. Breeder must not add a second production migration runner, migration registry or bootstrap path against the Journal database.
 
-Owns:
+Detailed records:
 
-- canonical Breeder product/application behavior;
-- Breeder web application source;
-- Breeder service/API behavior and domain orchestration;
-- API/domain contracts consumed by Breeder clients;
-- Breeder-specific deterministic domain tests;
-- responsive/accessibility implementation qualification;
-- Android client work later, if separately admitted.
+- implementation/v1.0/SCHEMA-DOMAIN-MODEL.md
+- implementation/v1.0/RUNTIME-SECURITY-MODEL.md
+- implementation/v1.0/API-SERVICE-CONTRACT.md
+- implementation/v1.0/WEB-ARCHITECTURE.md
+- implementation/v1.0/QUALIFICATION-MATRIX.md
+- implementation/v1.0/IMPLEMENTATION-ADMISSION.md
 
-### `nickdevph/aquaticfinder-journal`
+## 3. Final system shape
 
-Owns the physical Journal Supabase database migration path and shared Journal-domain contracts, including:
+~~~mermaid
+flowchart TD
+  Core["AquaticFinder Core identity/session authority"] --> Auth["server-side Core session adapter"]
+  Auth --> Web["Draneka Breeder web client"]
+  Web --> API["Breeder API/domain service"]
+  API --> BRole["restricted breeder runtime role"]
+  BRole --> JS["existing Journal Supabase Journal + breeder_* tables"]
+  API --> JAPI["Journal-owned service/API for Journal writes and admitted reads"]
+  API --> Handoff["structured commerce handoff"]
+  Handoff --> Commerce["AquaticFinder commerce allocation/listing/order authority"]
+~~~
 
-- additive `breeder_*` table migrations;
-- database constraints/indexes;
-- RLS/runtime-role grants and least-privilege enforcement;
-- shared Journal table changes required for safe Breeder references;
-- account deletion/retention/export integration affecting the shared database;
-- Journal-owned API behavior if Breeder must write a Journal-owned record;
-- database bootstrap/migration qualification for the shared physical database.
+The browser and Android clients never receive PostgreSQL credentials. The Breeder service resolves the authenticated Core subject server-side, then performs owner-scoped domain operations against the shared Journal database.
 
-### Rule
+## 4. Frozen ownership matrix
 
-No Breeder production code path may establish a second independent migration authority for the Journal database.
-
-## 4. Runtime architecture
-
-Target shape:
-
-```text
-                 AquaticFinder Core
-               identity / session
-                       |
-                       v
-               authenticated user
-                       |
-          +------------+------------+
-          |                         |
-          v                         v
-   Journal service/API       Breeder service/API
-          |                         |
-          |                 restricted Breeder
-          |                   runtime role
-          |                         |
-          +------------+------------+
-                       |
-                       v
-            Existing Journal Supabase
-
-        public.journal_*    public.breeder_*
-```
-
-Browser and Android clients must not connect directly to PostgreSQL with privileged credentials.
-
-A planned `BREEDER_DATABASE_URL` may point to the same Journal Supabase database using a dedicated least-privilege Breeder runtime role. This is configuration separation, not a separate database.
-
-## 5. Domain authority matrix
-
-| Concern | Canonical owner | Breeder behavior |
+| Domain fact or capability | Authority | Breeder rule |
 | --- | --- | --- |
-| Account/session identity | Core | consume existing authenticated identity |
-| Tank identity/location | Journal | reference `journal_tanks`; do not duplicate |
-| User-entered livestock identity | Journal | reference `journal_livestock` where applicable |
-| Water parameters | Journal | read/display context; Journal remains write owner |
-| Generic feeding/maintenance/observation | Journal | invoke Journal canonical write path when recorded |
-| Journal media | Journal | reuse media identity/storage where qualified |
-| Breeding Program | Breeder | canonical Breeder write |
-| Parentage/breeding source | Breeder | canonical Breeder write |
-| Reproductive output | Breeder | canonical Breeder write |
-| Hatch/recruitment observation | Breeder | canonical Breeder write |
-| Offspring/grow-out biological group | Breeder | canonical Breeder write; current tank references Journal |
-| Biological quantity/provenance | Breeder | canonical Breeder write |
-| Selection/phenotype evaluation | Breeder | canonical Breeder write |
-| Holdback/disposition | Breeder | canonical Breeder write |
-| Scheduled obligation | Journal scheduling where semantically compatible | Breeder binds/projects rather than duplicates scheduling engine |
-| Lifecycle suggestion | Breeder | derived/suggestion only; never biological fact |
-| Commerce-ready evidence | Breeder | prepare immutable/evidence-bounded handoff |
-| Marketplace allocation/order/sale | AquaticFinder commerce | outside Breeder ownership |
+| Account, profile, identity, session | Core | consume verified Core session; no duplicate identity authority |
+| Tank identity and location | Journal | reference Journal tank; never duplicate tanks |
+| Ordinary livestock identity | Journal | reference Journal livestock where applicable |
+| Water, feeding, maintenance, ordinary observations | Journal | use Journal service/API; no direct Breeder table writes |
+| Journal media and private storage | Journal | reuse through an admitted media adapter |
+| FollowUp/Schedule infrastructure | Journal | bind only where semantics match; do not duplicate scheduler |
+| Breeding Programs | Breeder | Breeder-owned durable record |
+| Breeder-stock membership/context | Breeder | Breeder-owned; Journal livestock is a reference |
+| Parentage/source context | Breeder | evidence-bounded; unknown remains unknown |
+| Reproductive outputs and hatches | Breeder | Breeder-owned biological authority |
+| Offspring/grow-out groups | Breeder | Breeder-owned; current tank is a Journal reference |
+| Quantity and operation ledger | Breeder | one biological quantity authority |
+| Provenance/lineage | Breeder | append-only evidence links and source snapshots |
+| Phenotype/evaluations | Breeder | observation only; never genotype inference |
+| Selection/disposition | Breeder | current eligibility is derived from current history |
+| Lifecycle suggestions/Breeder Round | Breeder | projection/attention; never a biological fact |
+| Commerce evidence/handoff/reconciliation | Breeder | explicit evidence-bounded handoff; no biological rewrite |
+| Listings, channels, orders, payment, shipping, commercial allocation | AquaticFinder commerce | outside Breeder v1.0 |
 
-## 6. Initial persistence model — planning candidate
+A foreign key to a Journal row does not transfer ownership of that Journal row.
 
-The exact schema is not yet implementation-authorized, but the first schema design should evaluate the following normalized set rather than copying prototype state blobs into one table:
+## 5. Required invariants
 
-```text
-breeder_programs
-breeder_program_stock
-breeder_parentage_contexts
-breeder_parentage_members
-breeder_reproductive_outputs
-breeder_hatch_observations
-breeder_offspring_groups
-breeder_offspring_group_sources
-breeder_group_operations
-breeder_selection_sessions
-breeder_selection_evaluations
-breeder_dispositions
-breeder_schedule_bindings
-breeder_lifecycle_suggestions
-breeder_commerce_handoffs
-breeder_commerce_handoff_media
-breeder_commerce_reconciliations
-```
-
-Every owner-scoped table should use UUID identity, `owner_user_id`, timestamps and explicit lifecycle/history semantics consistent with the domain contract.
-
-### Required direct Journal relationships
-
-Candidate same-database references include:
-
-- `current_tank_id -> journal_tanks.id`;
-- breeder-stock livestock reference -> `journal_livestock.id` when an individual is Journal-tracked;
-- selected media relation -> `journal_media_assets.id` where the existing media contract is reused;
-- schedule binding -> existing Journal schedule identity if the scheduling contract qualifies.
-
-A UUID existing in Journal is not sufficient: the implementation must prove that the referenced record is owned by the same authenticated user.
-
-## 7. Invariants that become executable contracts
-
-The implementation must encode the prototype's qualification rules as database/service tests.
+The following are implementation contracts, not UI suggestions.
 
 ### Quantity
 
-- remaining reproductive output cannot exceed original biological quantity;
-- legacy/materialized hatch quantities are counted exactly once;
-- split conserves quantity;
-- merge conserves quantity;
-- mortality/loss subtracts only the recorded loss;
-- move/feed/observation/stage changes do not silently alter quantity;
-- historical/inactive reproductive outputs cannot regain positive new commerce authority;
-- commerce allocation/reconciliation cannot mutate Breeder biological quantity.
+- one biological quantity authority per reproductive output and offspring group;
+- scalar/legacy and structured hatch observations are materialized once;
+- remaining output is original minus removed minus materialized hatch quantity, never a second independent scalar;
+- split conserves quantity across source and children;
+- merge conserves quantity and preserves all source provenance;
+- loss/mortality reduces only the affected current group;
+- move, feeding, observation and stage change do not change quantity;
+- an inactive, historical or fully materialized output cannot regain positive commerce authority;
+- commerce allocation and reconciliation are separate from biological quantity.
 
 ### Provenance
 
-- split descendants retain all source output/hatch provenance;
-- merges preserve all relevant source provenance or fail closed;
-- exact parents are recorded only when supported;
-- group/population-derived offspring do not gain fabricated exact parents;
-- controlled-generation labels require sufficient parent evidence;
-- annual-killifish hatch provenance remains linked to the exact wetting attempt;
-- historical source groups are immutable for biological mutation.
+- every descendant retains output and hatch source IDs;
+- split adds a derivation edge without deleting parent history;
+- merge preserves every source edge or fails closed;
+- individual promotion preserves known source provenance;
+- unknown/group/population ancestry cannot become exact sire/dam;
+- generation labels require sufficient evidence;
+- annual killifish hatch provenance includes the exact wetting attempt;
+- historical records are immutable for biological mutation.
 
-### Fact/action separation
+### Fact/action
 
-The implementation must keep distinct:
+~~~text
+suggestion != scheduled action != completed action != observation != derived state
+~~~
 
-```text
-suggestion
-scheduled action
-completed action
-observation
-canonical biological fact
-projection/derived state
-```
+Completing a check does not assert the biological fact being checked. A suggestion may be dismissed or deferred without creating a fact.
 
-Completing a task cannot manufacture the biological fact the task was intended to check.
+### Selection and privacy
 
-### Privacy
+- phenotype remains an observation;
+- current incompatible disposition removes current pairing eligibility;
+- selection goals preserve history and snapshots;
+- private media never becomes public implicitly;
+- zero selected public media remains zero;
+- only explicitly selected and Journal-authorized public evidence enters a handoff;
+- commerce reconciliation cannot modify breeding history.
 
-- private media remains private by default;
-- explicit zero-public-media selection remains zero;
-- only explicitly permitted evidence enters public report/handoff material;
-- no hidden default may repopulate deselected private evidence.
+## 6. Migration and shared-database sequencing
 
-## 8. Implementation sequence
+Journal main is currently:
 
-### Phase P0 — Planning and contract freeze — CURRENT
+~~~text
+nickdevph/aquaticfinder-journal
+main = 5f00cf5106e3127a8dfb55ab59407d262f1e8d16
+current main migration = 023-journal-ji-browser-result-handoff
+~~~
 
-Deliverables:
+Journal PR #873 is the active runtime-role/RLS hardening candidate:
 
-1. lock Decision 0008;
-2. bind canonical v1.0 product authority;
-3. map every v1.0 state-changing interaction to a domain owner;
-4. map shared Journal dependencies;
-5. define initial API/resource vocabulary;
-6. produce schema proposal and RLS threat model;
-7. identify exact Journal migration/runtime-role collision state before implementation;
-8. define qualification datasets for Betta, Medaka, Neocaridina and annual killifish;
-9. define cross-repository execution order.
+~~~text
+PR #873
+base = 5f00cf5106e3127a8dfb55ab59407d262f1e8d16
+head = 829618fe2d3f20a64703021676032be429079fd3
+migration = 024-journal-ji-runtime-role-rls-hardening
+state = OPEN / NOT MERGED
+~~~
 
-No production or source implementation is admitted by P0.
+No Breeder database migration may be based on or compete with the unmerged #873 line. After #873 reaches its independently reviewed final head and merges, the first Breeder migration is frozen as:
 
-Exit gate:
+~~~text
+025-journal-breeder-foundation.js
+025-journal-breeder-foundation.sql
+~~~
 
-```text
-P0_ARCHITECTURE_BOUND = YES
-P0_SCHEMA_PROPOSAL_REVIEWED = YES
-P0_SECURITY_MODEL_REVIEWED = YES
-P0_FIRST_IMPLEMENTATION_PACKAGE_DEFINED = YES
-```
+The migration must:
 
-### Phase P1 — Shared database foundation
+1. require the Journal marker family from final version 024;
+2. execute only as journal_migrator or an explicitly admitted migration actor;
+3. execute through both current Journal bootstrap entrypoints;
+4. create only the minimum breeder_* foundation tables, constraints, roles, grants, RLS and account-retention hooks needed by BREEDER-FOUNDATION-001;
+5. never rewrite an existing Journal migration;
+6. include disposable-Postgres qualification and a pre-data rollback proof;
+7. remain non-production until a separate Founder production-admission gate passes.
 
-Repository owner: `aquaticfinder-journal`.
+The Breeder repository owns no production migration file or runner. Its PRs may contain contracts, domain code, UI and integration tests only.
 
-Implement only the minimum additive persistence/security foundation required for the first vertical slice.
+## 7. Implementation-ready domain/service boundary
 
-Expected work:
+Breeder writes are intent/domain commands, not raw table CRUD. The initial versioned API is /api/v1.
 
-- initial `breeder_*` schema migrations;
-- constraints and indexes;
-- least-privilege Breeder runtime database role;
-- owner-scoped RLS/authorization behavior;
-- safe Journal tank/livestock references;
-- migration/bootstrap marker updates if required by current Journal conventions;
-- account deletion/retention treatment;
-- disposable database tests;
-- rollback proof.
+Frozen initial commands:
 
-No production application UI is required for this package.
-
-Production migration remains separately gated.
-
-### Phase P2 — Breeder domain service/API foundation
-
-Repository owner: `draneka-breeder` with Journal integration contracts as needed.
-
-Implement:
-
-- authenticated request boundary;
-- owner-scoped Program CRUD;
-- parentage/breeding-source contract;
-- reproductive-output contract;
-- explicit hatch/recruitment contract;
-- offspring-group contract;
-- deterministic quantity/provenance service functions;
-- idempotency for state-changing operations;
-- transactional readback;
-- typed validation and stable error codes.
-
-No broad UI expansion during this phase.
-
-### Phase P3 — First real end-to-end web slice
-
-Implement the smallest production slice that proves the architecture:
-
-```text
-Today
- -> Programs
- -> Program
- -> record reproductive output
- -> record explicit hatch/recruitment
- -> create/view offspring group
- -> link current Journal tank
- -> Quick Log / observation path
- -> return to Today/Breeder Round projection
-```
-
-This slice must use real persistence and real authenticated ownership checks.
-
-The goal is not feature completeness. The goal is proving that one canonical biological lifecycle works end to end without duplicate Journal data or prototype-only state.
-
-### Phase P4 — Grow-out operations and provenance
-
-Add:
-
-- count revision;
-- mortality/loss;
-- move;
-- life-stage observation;
-- split;
-- lineage-safe merge;
-- historical-source immutability;
-- multiple hatches from one reproductive output;
-- repeated-collection and population-derived workflows;
-- wetting/re-drying/wetting/hatch attempt provenance.
-
-This phase carries the v0.5/v0.6 biological regression suite into production tests.
-
-### Phase P5 — Selection and line development
-
-Add:
-
-- breeding goals/history;
-- phenotype evaluations and evidence;
-- selection sessions;
-- individual holdbacks;
-- non-breeding/sale-rehome/retire disposition;
-- Pair Builder eligibility/relatedness guardrails;
-- generation evidence rules.
-
-Phenotype remains observational; genotype is never inferred without evidence.
-
-### Phase P6 — Breeder Round and operational attention
-
-Integrate:
-
-- Journal schedules/occurrences where semantically compatible;
-- breeder-specific lifecycle suggestions;
-- breeder-created bindings/context;
-- defer/skip/suppress behavior;
-- exception/risk attention;
-- clear separation between due, done, observed and biologically true.
-
-Breeder Round remains a projection/attention surface rather than a second source of biological truth.
-
-### Phase P7 — Commerce handoff and reconciliation
-
-Implement the existing bounded commerce integration only after the biological model is stable:
-
-- mark eligible stock sale-ready;
-- explicit public/private evidence selection;
-- structured handoff payload;
-- provenance report;
-- biological quantity snapshot;
-- separate commerce allocation state;
-- reconciliation that never rewrites lineage or biological quantity.
-
-Marketplace listing management, payment, order and shipping remain outside Breeder.
-
-### Phase P8 — Production hardening and qualification
-
-Required gates:
-
-- migration idempotence and rollback;
-- cross-user security/RLS negative tests;
-- least-privilege role review;
-- account deletion/export/retention tests;
-- canonical v1.0 workflow regression;
-- Betta/Medaka/Neocaridina/killifish domain regression;
-- 320/390/768/1440 responsive matrix;
-- keyboard/focus/accessibility qualification;
-- zero private-media leakage;
-- quantity/provenance invariant suite;
-- API error/retry/idempotency tests;
-- production-readiness review before any live migration/deployment.
-
-### Phase P9 — Android client convergence — separately admitted
-
-Android should consume the same Breeder API/domain contracts rather than creating a second persistence implementation. Android is not part of the first database/web convergence package unless separately prioritized.
-
-## 9. First implementation package recommendation
-
-After P0 planning review, the first executable package should be deliberately small:
-
-```text
-BREEDER-FOUNDATION-001
-
-Database:
-  breeder_programs
-  minimum parentage/source representation
-  breeder_reproductive_outputs
-  breeder_hatch_observations
-  breeder_offspring_groups
-  provenance/source links required by that path
-
-Shared references:
-  journal_tanks
-  optional journal_livestock parent references
-
-Service/API:
-  create/list/read Program
-  record reproductive output
-  record explicit hatch/recruitment
-  create/read offspring group
-
-UI:
-  none until persistence/API qualification passes
-```
-
-Do not start with Pair Builder, commerce, analytics, AI, broad species overlays or Android.
-
-## 10. API design rules
-
-The service contract should be intent/domain oriented rather than exposing raw table CRUD.
-
-Examples of eventual commands:
-
-```text
+~~~text
 createProgram
 recordReproductiveOutput
 recordHatchObservation
+createOffspringGroup
 reviseGroupCount
 recordMortality
 moveOffspringGroup
@@ -416,99 +209,183 @@ recordSelectionEvaluation
 applyDisposition
 prepareCommerceHandoff
 reconcileCommerceOutcome
-```
+~~~
 
-Each state-changing command must:
+Every command resolves the owner from a verified Core session, validates all same-owner references, checks an expected revision where state can race, uses an idempotency key, performs one database transaction, returns committed readback and emits an auditable command receipt.
 
-1. resolve authenticated owner;
-2. validate all referenced Journal/Breeder records are in scope;
-3. validate expected current state/revision where needed;
-4. apply one transaction;
-5. preserve provenance and quantity invariants;
-6. return committed readback;
-7. be safe under retry/idempotency rules.
+Journal-owned writes—feeding, water tests, ordinary observations, media creation and schedule completion—call Journal's canonical service or API. Breeder may persist an explicit Breeder-to-Journal binding, but does not bypass Journal domain validation.
 
-## 11. Journal integration rules
+## 8. Web architecture decision
 
-### Reads
+The initial production web app is a separate authenticated React application in nickdevph/draneka-breeder, using the existing ecosystem's proven React/Vite/Node shape:
 
-Breeder may read admitted Journal records needed for contextual display and validation, using least privilege.
+- React 19 + TypeScript;
+- Vite 8;
+- server-side Node API/domain service;
+- pg against the same Journal Supabase database using a restricted server-only credential;
+- Playwright browser qualification;
+- Vercel deployment only after implementation admission.
 
-### Writes
+The canonical IA remains:
 
-If the user records a Journal-owned event such as a generic feeding, water test or ordinary observation, Breeder should call the Journal-owned domain/API path where feasible rather than writing `journal_*` tables directly.
+~~~text
+Today
+Programs
+Log
+Grow-out
+More
+~~~
 
-Breeder-specific biological writes remain in `breeder_*` records.
+No new primary navigation destination is introduced. The authenticated shell, responsive states, forms, loading/empty/error/recovery states, keyboard paths and media adapter are specified in WEB-ARCHITECTURE.md.
 
-### Timeline projection
+Core session reuse is an adapter boundary: the browser presents the existing authenticated session; the Breeder server verifies it through the existing Core session contract or an authenticated service-to-service introspection path. No endpoint accepts a caller-supplied owner_user_id as authority.
 
-The eventual Breeder timeline may project Journal and Breeder events together, but projection does not merge their authorities.
+## 9. Data migration and existing users
 
-## 12. Media plan
+Initial Breeder release is prospective.
 
-Initial preference:
+- Existing Journal tanks, livestock, events and media may be referenced as existing facts after owner-scope validation.
+- No Program, parentage, reproductive output, hatch, generation or breeding history is inferred from generic Journal history.
+- No automatic backfill is authorized.
+- Any future backfill requires a separate Founder decision, explicit evidence mapping and independent migration review.
+- Account deletion/export/retention must include Breeder-owned rows through the Journal-owned lifecycle path.
 
-- reuse `journal_media_assets` and the private Journal media pipeline;
-- use explicit Breeder association records;
-- retain the canonical explicit public/private selection step for commerce evidence;
-- do not copy the same binary solely because it is used by Breeder.
+## 10. Implementation packages
 
-This must be separately verified against current Journal media retention/security behavior before implementation.
+| Package | Owner/repository | Dependency | Completion gate |
+| --- | --- | --- | --- |
+| P0 / PLAN-001 | Draneka Breeder PR #12 | canonical v1.0 + live Journal inspection | this plan and independent review PASS |
+| BREEDER-FOUNDATION-001A | Journal PR after #873 | final merged Journal 024 | schema, role, RLS, FK, retention and disposable-DB PASS |
+| BREEDER-FOUNDATION-001B | Breeder repository | 001A qualified on disposable DB | auth adapter, domain commands, idempotency and API PASS |
+| BREEDER-FOUNDATION-001C | Breeder repository | 001B API | Today/Programs/output/hatch/group/tank web slice and readback PASS |
+| P4-GROWOUT-002 | Breeder + Journal only where needed | foundation slice | count/move/split/merge/loss/stage/provenance PASS |
+| P5-SELECTION-003 | Breeder | grow-out provenance | evaluation, goals, disposition and Pair Builder guardrails PASS |
+| P6-ROUND-004 | Breeder + Journal schedule adapter | selection/domain foundation | projection/action/fact separation and schedule integration PASS |
+| P7-COMMERCE-005 | Breeder + AquaticFinder contract | stable biological model | explicit evidence, handoff and non-mutating reconciliation PASS |
+| P8-HARDENING-006 | both repositories as needed | all v1.0 surfaces | responsive/a11y/security/regression PASS |
+| P9-ADMISSION-007 | Founder-gated | P8 | production migration/deployment admission PASS |
+| P10-ANDROID-008 | separate Android admission | stable web/domain contract | Android convergence/review only after P9 or separate Founder admission |
 
-## 13. Environment and qualification strategy
+Each package is one rollback unit. A package cannot silently absorb a later package or alter canonical v1.0 semantics.
 
-Production target is the existing Journal Supabase project only.
+## 11. First executable package — frozen mandate
 
-Before live migration:
+~~~text
+PACKAGE = BREEDER-FOUNDATION-001
+SUBPACKAGES = 001A Journal foundation, 001B service/API, 001C web slice
+STATUS = FROZEN FOR IMPLEMENTATION COMMISSION
+~~~
 
-- schema and domain tests run against disposable/non-production PostgreSQL infrastructure;
-- migration targets must be guarded against accidental production writes;
-- any qualification route that touches the real Journal project requires explicit bounded authority;
-- the production database must not be used as a casual development sandbox.
+### 001A — Journal database foundation
 
-No additional production Supabase project is required by this plan.
+Implement only:
 
-## 14. Planning questions that remain intentionally open
+- breeder_programs;
+- minimum owner-scoped parentage/source context;
+- breeder_reproductive_outputs;
+- breeder_hatch_observations;
+- breeder_offspring_groups;
+- breeder_group_provenance;
+- breeder_group_operations;
+- breeder_quantity_ledger;
+- breeder_command_receipts;
+- same-owner composite references to Journal tanks and optional Journal livestock;
+- dedicated Breeder runtime capability/login role;
+- RLS, grants, owner-scope helper, account deletion/export/retention hooks;
+- migration marker/bootstrapping and tests.
 
-These are not blockers to the locked database decision, but P0 must resolve them before source implementation:
+Do not implement selection, Pair Builder, commerce, Android, AI, marketplace operations, or new navigation.
 
-1. exact Breeder web runtime/deployment placement and URL;
-2. exact mechanism for reusing Core authentication in the separate Breeder application runtime;
-3. final table decomposition and revision/history strategy;
-4. whether current Journal schedule tables can support all breeder obligations without semantic distortion;
-5. exact media reuse adapter and whether a same-project dedicated bucket is necessary;
-6. final API transport/versioning convention;
-7. whether Journal should expose read projections/views for Breeder instead of direct table SELECT privileges;
-8. production feature-flag/activation strategy.
+### 001B — service/API
 
-None of these questions reopens the decision to use the existing Journal Supabase project.
+Prove:
 
-## 15. Explicit non-goals during convergence
+~~~text
+verified Core session
+  -> owner-scoped create/read Program
+  -> parent/source context
+  -> record reproductive output
+  -> explicit hatch/recruitment
+  -> create offspring group
+  -> assign/reference Journal tank
+  -> transaction commit
+  -> committed readback
+~~~
 
-Do not add during v1.0 implementation convergence unless separately authorized:
+The service must reject cross-user tank/livestock UUIDs, duplicate idempotency with a different request hash, stale revisions, invalid quantities and unsupported provenance claims.
 
-- v1.1 product features;
-- a third Supabase project;
-- marketplace-management UI;
-- payment/order/shipping systems;
-- broad CRM;
-- automatic best-pair authority;
-- unsupported genetics inference;
-- duplicate Journal tanks/livestock/water/media systems;
-- duplicate scheduling engine without evidence;
-- subscription gating merely because implementation is underway;
-- AI-generated canonical biological facts.
+### 001C — web
 
-## 16. Planning terminal
+Implement only the canonical authenticated shell and the vertical slice screens needed to create and read the above records. UI work starts only after 001A disposable database and security qualification passes. The first package is not production-deployed by this planning PR.
 
-The present planning branch is allowed to define and review implementation architecture only.
+## 12. Qualification strategy
 
-```text
-CANONICAL_PRODUCT_AUTHORITY = HOLISTIC_V1_0
-BREEDER_DATABASE_DECISION = EXISTING_JOURNAL_SUPABASE_LOCKED
+Every package must use the matrix in QUALIFICATION-MATRIX.md. Required dimensions include:
+
+- unit and domain invariants;
+- disposable Postgres migrations and rollback;
+- owner isolation/RLS and cross-user composite-FK failures;
+- least-privilege runtime-role verification;
+- transaction, concurrency and idempotency;
+- API integration and committed readback;
+- Playwright E2E at 320, 390, 768 and 1440 CSS widths;
+- keyboard/focus/accessibility;
+- loading, empty, error and recovery;
+- canonical v1.0 and v0.5-v0.9 regression fixtures;
+- Journal regression whenever shared Journal code, migration bootstrap, roles or owned tables change;
+- fresh security review before production database admission.
+
+Prototype screenshots or HTML behavior alone are not implementation evidence.
+
+## 13. Rollback and failure strategy
+
+- Before production data exists, 025 may use a tested compensating/down script on a disposable target.
+- After Breeder data exists, do not drop tables or delete history to roll back code.
+- Disable the server-side Breeder feature flag, stop new commands, preserve append-only data and deploy the last qualified application.
+- Repair forward with a new Journal migration; never rewrite 025.
+- A failed cross-domain write leaves no half-created biological record. Journal API calls are outside Breeder biological transactions and use explicit pending or failed receipts if a future workflow needs compensation.
+- A failed media/publication handoff cannot change quantity or lineage.
+- A stale or conflicting idempotency key returns a deterministic conflict and does not retry a mutation.
+- A concurrency conflict returns REVISION_CONFLICT and requires fresh readback.
+- Production migration/deployment is stopped on any security, rollback, regression, private-media, provenance or quantity failure.
+
+## 14. Implementation-admission checklist
+
+Implementation may begin only when all are true:
+
+~~~text
+CANONICAL_V1_0_BOUND = PASS
+BREEDER_DATABASE_PROJECT = EXISTING_JOURNAL_SUPABASE
 NEW_SUPABASE_PROJECT = NO
-IMPLEMENTATION_PHASE = P0_PLANNING
-PRODUCTION_SCHEMA_MUTATION = NO
+CORE_BOUNDARY_PRESERVED = PASS
+JOURNAL_BREEDER_OWNERSHIP_MATRIX = FROZEN
+DATABASE_MIGRATION_AUTHORITY = FROZEN
+SCHEMA_PLAN = IMPLEMENTATION_READY
+RUNTIME_SECURITY_MODEL = IMPLEMENTATION_READY
+API_SERVICE_BOUNDARY = IMPLEMENTATION_READY
+WEB_ARCHITECTURE = IMPLEMENTATION_READY
+MIGRATION_AND_ROLLBACK_PLAN = IMPLEMENTATION_READY
+TEST_AND_QUALIFICATION_PLAN = IMPLEMENTATION_READY
+CURRENT_JOURNAL_COLLISION_ANALYSIS = PASS
+FIRST_EXECUTABLE_PACKAGE = FROZEN
+INDEPENDENT_PLANNING_REVIEW = PASS
+PRODUCTION_DATABASE_MUTATION = NO
 PRODUCTION_SOURCE_IMPLEMENTATION = NO
-FIRST_EXECUTABLE_PACKAGE = BREEDER-FOUNDATION-001_PENDING_P0_REVIEW
-```
+BREEDER_V1_0_IMPLEMENTATION_READY = YES
+~~~
+
+This means implementation work is admitted as the next Founder-gated activity. It does not itself authorize production migration, deployment, release or Android work.
+
+## 15. Non-effects
+
+This planning PR does not:
+
+- create or alter Supabase projects;
+- execute migrations;
+- mutate production databases;
+- implement production API, UI or Android source;
+- deploy services;
+- change Journal runtime-role/security code;
+- merge Journal PR #873;
+- infer existing Breeder history;
+- add marketplace management, payments, orders, shipping, CRM, genotype inference, predictive pairing authority, hardware integration or other v1.1 scope.
