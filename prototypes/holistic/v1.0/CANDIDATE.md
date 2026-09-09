@@ -1,20 +1,32 @@
-# Draneka Aquarium Breeder — Holistic v1.0 Candidate
+# Draneka Aquarium Breeder — Holistic v1.0 Bounded-Correction Candidate
 
 Date: 2026-09-09
-Status: **PRODUCED / NON-CANONICAL / PENDING INDEPENDENT REVIEW**
+Status: **PRODUCED / PRODUCER-VALIDATED / NON-CANONICAL / PENDING FRESH INDEPENDENT RE-REVIEW**
 Branch: `prototype/v1.0-simplify-and-qualify`
 
-## Exact candidate binding
+## Exact corrected candidate binding
+
+- Artifact: `DRANEKA-AQUARIUM-BREEDER-HOLISTIC-PROTOTYPE-V1.0-SIMPLIFY-QUALIFY-BOUNDED-CORRECTION-CANDIDATE.html`
+- Google Drive ID: `1zpWYG4igEMRm_Bv2HZJMgKrfXhVwL8c0`
+- MIME: `text/html`
+- Exact bytes: `458038`
+- SHA-256: `4746694d3c40ec03177fb07723248e3373963894c94e66061b676ae3dbc2ab5d`
+
+The corrected candidate is a new immutable Drive object. The independently reviewed failing v1.0 object was not overwritten.
+
+## Independently reviewed failing predecessor
 
 - Artifact: `DRANEKA-AQUARIUM-BREEDER-HOLISTIC-PROTOTYPE-V1.0-SIMPLIFY-QUALIFY-CANDIDATE.html`
 - Google Drive ID: `18egQ7iZ5jCyDJxoHQ9a1SvI2PIdfigos`
-- MIME: `text/html`
 - Exact bytes: `456195`
 - SHA-256: `8c65ef2f2121d71ba29d4bb7d73bf21bc7b1ad71c684df1abe458b8f477b8909`
+- Independently reviewed producer head: `9c635b04259eb243e5e11e10cdf8a84453b32d41`
+- Independent review receipt commit: `c6ad074c4fa15e7275fbf2cd3c6e945182383eab`
+- Independent disposition: `CHANGES_REQUIRED`
 
-The candidate is a new immutable Drive object. It does not overwrite the canonical v0.9 artifact.
+## Canonical predecessor
 
-## Exact canonical predecessor
+Canonical product/design authority remains corrected holistic v0.9 until this corrected v1.0 candidate independently passes, receives Founder promotion, and PR #11 merges:
 
 - Artifact: `DRANEKA-AQUARIUM-BREEDER-HOLISTIC-PROTOTYPE-V0.9-COMMERCE-HANDOFF-EVIDENCE-SECOND-BOUNDED-CORRECTION-CANDIDATE.html`
 - Google Drive ID: `1sZ6TOO25Otne0S5Atbul6s4SRHQMnN-4`
@@ -22,58 +34,46 @@ The candidate is a new immutable Drive object. It does not overwrite the canonic
 - SHA-256: `74b6912c393948fa3b9bf77f6dd21067cceca620f6d09747af1379791c4677b0`
 - Canonical merge commit: `2b2953a62561a21cb03fcb4c42e14bf03c1cd46b`
 
-## Bounded producer changes
+## Bounded correction scope
 
-No new breeder domain capability was introduced.
+This correction addresses only the five findings in the independent v1.0 receipt.
 
-The candidate changes only simplify/qualify surfaces:
+1. **V10-IR-001 — legacy reproductive-output quantity authority**
+   - legacy scalar `hatched` and structured `hatches[]` are normalized into one materialized-hatch authority;
+   - legacy scalar hatch quantity is subtracted from remaining reproductive output;
+   - when a first new structured hatch is appended to a legacy record, the legacy scalar is preserved as an explicit baseline rather than lost or double-counted;
+   - legacy hatch observations render as observed rather than `Not observed`;
+   - historical reproductive outputs cannot acquire positive new commerce quantity.
 
-1. **Primary navigation parity**
-   - narrow and wide layouts use the same primary destinations: `Today / Programs / Log / Grow-out / More`;
-   - redundant desktop-only primary shortcuts for Breeding stock and Intelligence were removed;
-   - Commerce remains contextual rather than becoming primary navigation.
+2. **V10-IR-002 — Program text-search recovery**
+   - zero-result live text search now uses Program terminology;
+   - `Reset search and filters` is restored and returns to the default active Program list.
 
-2. **Today simplification**
-   - the daily surface focuses on planned attention, active Programs and Journal connection;
-   - repeated educational parentage content was removed from the daily surface;
-   - `Start Breeder Round` and `Log what happened` remain direct actions.
+3. **V10-IR-003 — wide primary terminology**
+   - the 1440px sidebar primary destination is `Log`, matching narrow layouts and the mandated five destinations.
 
-3. **More consolidation**
-   - tools are grouped under `Daily work & records`, `Breeding decisions & evidence`, and `Connections & setup`;
-   - the standalone Commerce row is removed from More because commerce remains reachable from source records and the Journal/AquaticFinder connection.
+4. **V10-IR-004 — 320px Commerce-history reflow**
+   - long commerce schema/status/ledger content is allowed to shrink and wrap inside the sheet rather than forcing horizontal overflow.
 
-4. **Terminology**
-   - `Breeder Round` capitalization is normalized;
-   - Program-level `More` is labelled `Tools`;
-   - Grow-out screen title aligns with primary navigation terminology.
+5. **V10-IR-005 — stale Settings identity**
+   - Settings identifies holistic v1.0 and the exact bounded-correction artifact.
 
-5. **Recovery**
-   - Program search/filter empty state can reset to default active Programs;
-   - Grow-out filtered-empty state can return to all groups;
-   - missing-record state provides explicit routes to Today and Programs.
+No new breeder domain capability, biological inference, commerce domain, backend/API/schema/database authority, production implementation, Android/web release work, deployment, signing, or later-version scope is introduced.
 
-6. **Accessibility affordances**
-   - skip-to-main-content link;
-   - visible focus treatment;
-   - 44 px minimum targets on common action/navigation controls;
-   - form-error live/alert semantics;
-   - existing dialog focus/return behavior is retained.
+## Producer validation boundary
 
-7. **Qualification surfaces**
-   - v1.0 guide records frequent-task interaction targets;
-   - mobile/web parity boundary is explicit;
-   - independent breeder usability review and implementation-admission evidence are mandatory review outputs rather than producer PASS claims.
+The producer lane has reproduced the five failing paths against the correction and run bounded construction/runtime checks. Those checks are producer evidence only. They do not constitute independent qualification and must not be inherited by the fresh reviewer.
 
-## Explicit authority boundary
+See:
 
-The candidate does not authorize or add backend/API/schema/database changes, Android/web production implementation, production AquaticFinder integration, deployment, signing, release or any v1.1+ scope.
+- `prototypes/holistic/v1.0/VALIDATION.md`
+- `prototypes/holistic/v1.0/BOUNDED-CORRECTION-RECEIPT.md`
+- `prototypes/holistic/v1.0/BOUNDED-CORRECTION-INDEPENDENT-REVIEW-MANDATE.md`
 
-Canonical v0.9 remains authoritative unless and until this exact candidate independently passes, receives Founder promotion, and the v1.0 iteration PR merges to `main`.
-
-`HOLISTIC_V1_0_CANDIDATE_PRODUCED = YES`
-
-`HOLISTIC_V1_0_EXACT_BINDING = 456195_BYTES / 8c65ef2f2121d71ba29d4bb7d73bf21bc7b1ad71c684df1abe458b8f477b8909`
-
-`HOLISTIC_V1_0_PROMOTION_ELIGIBLE = NO_PENDING_INDEPENDENT_REVIEW`
-
-`HOLISTIC_V1_0_CANONICAL = NO`
+```text
+HOLISTIC_V1_0_BOUNDED_CORRECTION_CANDIDATE_PRODUCED = YES
+HOLISTIC_V1_0_BOUNDED_CORRECTION_EXACT_BINDING = 458038_BYTES / 4746694d3c40ec03177fb07723248e3373963894c94e66061b676ae3dbc2ab5d
+HOLISTIC_V1_0_INDEPENDENT_REVIEW = PENDING_FRESH_REREVIEW
+HOLISTIC_V1_0_PROMOTION_ELIGIBLE = NO_PENDING_FRESH_INDEPENDENT_REREVIEW
+HOLISTIC_V1_0_CANONICAL = NO
+```
