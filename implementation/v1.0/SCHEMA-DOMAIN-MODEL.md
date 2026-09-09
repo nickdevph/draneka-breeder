@@ -326,3 +326,238 @@ If an existing relation cannot safely receive the required uniqueness proof, the
 ## 6. Rollback compatibility
 
 025 is additive and forward-only after production data exists. On disposable databases, a tested rollback may remove the entire unreferenced breeder foundation. On data-bearing targets, rollback is feature disable plus forward repair. No migration rewrites or destructive history cleanup are admitted.
+
+## 7. Full v1.0 relation definitions
+
+The following definitions complete the v1.0 model. They replace the earlier deferred-only list; they are planned now even though their implementation packages are later than the foundation slice.
+
+### breeder_program_stock
+
+~~~text
+id uuid primary key
+owner_user_id uuid not null
+program_id uuid not null
+journal_livestock_id uuid null
+stock_kind text not null: INDIVIDUAL | GROUP | POPULATION
+membership_role text not null: BREEDER | PARENT | BREEDING_GROUP | SOURCE_POPULATION
+label text null
+known_sex text null
+active_from timestamptz not null
+active_to timestamptz null
+current_disposition text null
+revision integer not null default 1
+created_at timestamptz not null
+updated_at timestamptz not null
+unique(id, owner_user_id)
+unique(owner_user_id, program_id, journal_livestock_id, active_from)
+foreign keys to breeder_programs and journal_livestock use owner composites
+~~~
+
+Membership is Breeder context. The Journal livestock row remains Journal-owned. A group or population member can omit journal_livestock_id. Active membership and disposition history are derived from append-only events; no hard delete.
+
+### breeder_evaluations
+
+~~~text
+id uuid primary key
+owner_user_id uuid not null
+program_id uuid not null
+selection_session_id uuid null
+stock_id uuid null
+offspring_group_id uuid null
+observed_at timestamptz not null
+trait_key text not null
+trait_value text null
+grade text null
+confidence text not null: RECORDED | UNCERTAIN | NOT_ENOUGH_EVIDENCE
+notes text null
+evidence_state text not null: NONE | PRIVATE | PUBLIC_ELIGIBLE
+revision integer not null default 1
+created_at timestamptz not null
+unique(id, owner_user_id)
+foreign keys use owner composites
+check exactly one subject of stock_id or offspring_group_id
+~~~
+
+An evaluation is an observation. It never writes genotype, exact ancestry or pairing eligibility directly. Media/evidence IDs are associated through a later explicit association relation and are checked by the Journal media authority.
+
+### breeder_selection_sessions
+
+~~~text
+id uuid primary key
+owner_user_id uuid not null
+program_id uuid not null
+goal_snapshot jsonb not null
+started_at timestamptz not null
+closed_at timestamptz null
+status text not null: OPEN | CLOSED | ARCHIVED
+revision integer not null default 1
+created_at timestamptz not null
+updated_at timestamptz not null
+unique(id, owner_user_id)
+foreign key (program_id, owner_user_id)
+  references breeder_programs(id, owner_user_id)
+~~~
+
+Goal history is snapshot-preserving. Editing a later goal cannot rewrite a closed session's goal_snapshot.
+
+### breeder_selection_members
+
+~~~text
+id uuid primary key
+owner_user_id uuid not null
+selection_session_id uuid not null
+stock_id uuid null
+offspring_group_id uuid null
+evaluation_id uuid null
+decision text not null: HOLD_BACK | BREED | NON_BREEDING | SALE_REHOME | RETIRE | REVIEW
+reason text null
+decision_at timestamptz not null
+created_at timestamptz not null
+unique(id, owner_user_id)
+foreign keys use owner composites
+check exactly one subject of stock_id or offspring_group_id
+~~~
+
+This is an append-only selection decision. The current Pair Builder projection must re-evaluate current disposition and provenance at read time; it cannot rely on stale selection membership.
+
+### breeder_dispositions
+
+~~~text
+id uuid primary key
+owner_user_id uuid not null
+program_id uuid not null
+stock_id uuid null
+offspring_group_id uuid null
+disposition text not null: HOLD_BACK | NON_BREEDING | SALE_REHOME | RETIRE
+reason text null
+effective_at timestamptz not null
+supersedes_id uuid null
+created_at timestamptz not null
+unique(id, owner_user_id)
+foreign keys use owner composites
+check exactly one subject of stock_id or offspring_group_id
+~~~
+
+Disposition is history, not a mutable boolean. The current disposition is the latest valid row for the subject. A sale/rehome disposition does not create a commerce quantity or biological loss; commerce handoff is separate.
+
+### breeder_schedule_bindings
+
+~~~text
+id uuid primary key
+owner_user_id uuid not null
+program_id uuid not null
+journal_schedule_plan_id uuid null
+journal_followup_id uuid null
+binding_kind text not null: SCHEDULE | FOLLOW_UP
+semantics_status text not null: COMPATIBLE | PROJECTION_ONLY | REJECTED
+created_at timestamptz not null
+updated_at timestamptz not null
+unique(id, owner_user_id)
+check exactly one Journal schedule/followup reference
+~~~
+
+The relation is a Breeder binding/projection. Journal remains the authority for due state, completion and occurrence history. A Breeder Round item may link to this binding, but completing a Journal task cannot create a hatch, spawn or other biological fact.
+
+### breeder_lifecycle_suggestions
+
+~~~text
+id uuid primary key
+owner_user_id uuid not null
+program_id uuid not null
+subject_type text not null: PROGRAM | OUTPUT | HATCH | GROUP | STOCK
+subject_id uuid not null
+suggestion_kind text not null
+reason_code text not null
+suggested_at timestamptz not null
+due_at timestamptz null
+state text not null: SUGGESTED | DEFERRED | DISMISSED | RESOLVED | EXPIRED
+resolved_by_operation_id uuid null
+created_at timestamptz not null
+updated_at timestamptz not null
+unique(owner_user_id, subject_type, subject_id, suggestion_kind, suggested_at)
+~~~
+
+This is derived/attention state. The subject reference is validated by the domain service because subject_type is a bounded union; no suggestion is a source of biological truth. Breeder Round is a query/projection over this table and compatible Journal schedule/followup projections, not a duplicate scheduler.
+
+### breeder_commerce_handoffs
+
+~~~text
+id uuid primary key
+owner_user_id uuid not null
+program_id uuid not null
+source_stock_id uuid null
+source_group_id uuid null
+status text not null: DRAFT | READY | SENT | ACCEPTED | REJECTED | CANCELLED
+schema_version text not null: draneka.aquaticfinder.commerce-handoff.v1
+biological_quantity_snapshot numeric not null
+proposed_commerce_quantity numeric not null
+public_facts_snapshot jsonb not null
+provenance_snapshot jsonb not null
+public_media_selection_explicit boolean not null
+created_at timestamptz not null
+sent_at timestamptz null
+unique(id, owner_user_id)
+check exactly one source subject
+check biological_quantity_snapshot >= 0
+check proposed_commerce_quantity >= 0
+check public_media_selection_explicit = true
+foreign keys to source stock/group use owner composites
+~~~
+
+The handoff is an immutable evidence snapshot after READY/SENT. Proposed commerce quantity is not a biological ledger entry. A stale source may still receive a commercial outcome receipt without rewriting its breeding history.
+
+### breeder_commerce_handoff_media
+
+~~~text
+id uuid primary key
+owner_user_id uuid not null
+handoff_id uuid not null
+journal_media_asset_id uuid not null
+selection_role text not null: PUBLIC_EVIDENCE
+selected_at timestamptz not null
+unique(owner_user_id, handoff_id, journal_media_asset_id)
+foreign keys use owner composites
+~~~
+
+Zero rows is a valid explicit selection. Every non-zero row must be authorized by the Journal media adapter as public-eligible for this owner and handoff. Private media is rejected; selection never changes Journal media visibility.
+
+### breeder_commerce_reconciliations
+
+~~~text
+id uuid primary key
+owner_user_id uuid not null
+handoff_id uuid not null
+channel_key text not null
+external_reference text null
+allocation_quantity numeric not null
+outcome_quantity numeric not null
+outcome_kind text not null: RESERVED | SOLD | RETURNED | CANCELLED | EXPIRED | REJECTED
+recorded_at timestamptz not null
+notes text null
+unique(id, owner_user_id)
+foreign key (handoff_id, owner_user_id)
+  references breeder_commerce_handoffs(id, owner_user_id)
+  on delete restrict
+check allocation_quantity >= 0
+check outcome_quantity >= 0
+~~~
+
+Reconciliation is commercial evidence. It cannot insert into breeder_quantity_ledger, alter source counts, change provenance or restore Pair Builder eligibility.
+
+## 8. Common constraints and runtime access for all relations
+
+All relations in this document:
+
+- are owned by journal_migrator;
+- have RLS enabled and forced;
+- expose explicit SELECT/INSERT/UPDATE policies to breeder_runtime only;
+- use the server-bound owner scope described in RUNTIME-SECURITY-MODEL.md;
+- deny runtime DELETE/TRUNCATE/DDL;
+- use owner composite foreign keys for Breeder parents and Journal references where technically possible;
+- preserve created_at/recorded_at/effective_at timestamps rather than overwriting facts;
+- use archive/status or supersede links instead of hard deletion;
+- are included in the Journal account lifecycle and export contract;
+- are added additively by Journal migration 025 or later package migrations;
+- are safe to ignore by older Journal application code because they are additive and feature-gated.
+
+If a database constraint cannot be expressed safely, the write is rejected in the domain service and the missing constraint is a production-admission blocker, not a reason to accept an unchecked UUID or mutable fact.
