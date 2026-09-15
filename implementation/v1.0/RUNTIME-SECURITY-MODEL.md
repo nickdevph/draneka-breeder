@@ -2,7 +2,7 @@
 # Breeder v1.0 Runtime Security and RLS Model
 
 Status: CORRECTED IMPLEMENTATION PLAN / SECURITY QUALIFICATION NOT RUN
-Physical database: existing Journal Supabase project  
+Physical database: existing Journal Supabase project
 Security rule: Breeder must not inherit broad Journal runtime privileges
 
 ## 1. Trust boundaries
@@ -35,13 +35,26 @@ The exact role names may be adjusted only by the Journal security review; the pr
 breeder_runtime receives only:
 
 - USAGE on public;
-- SELECT, INSERT and UPDATE on the admitted breeder_* tables;
+- SELECT and INSERT on all admitted breeder_* tables;
+- column-scoped UPDATE only on these mutable context/projection columns:
+  - `breeder_programs`: name, species context, status, archived_at, revision, updated_at;
+  - `breeder_parentage_contexts`: label, notes, updated_at while the context is not referenced by biological history;
+  - `breeder_program_stock`: active_to, current_disposition projection, revision, updated_at;
+  - `breeder_reproductive_outputs`: status, revision, updated_at only;
+  - `breeder_offspring_groups`: stage, current_tank_id, status, revision, updated_at only;
+  - `breeder_selection_sessions`: goal_snapshot, closed_at, status, revision, updated_at while open;
+  - `breeder_schedule_bindings`: semantics_status, updated_at;
+  - `breeder_lifecycle_suggestions`: state, updated_at;
 - no DELETE, TRUNCATE, REFERENCES, TRIGGER, CREATE or DDL;
 - sequence privileges only where the final schema actually uses sequences;
 - no EXECUTE on Journal security-sensitive routines;
 - no access to Journal Intelligence tables;
 - no access to Core tables;
 - no direct write privilege on journal_* tables.
+
+The UPDATE allowlist does not include owner identity, primary keys, created/recorded/effective timestamps, biological quantities, operation sources, provenance, observation facts, disposition history, handoff snapshots/history, reconciliation receipts or committed command receipts. Those relations are insert-only for runtime purposes.
+
+For every insert-only relation, the Journal migration must `REVOKE UPDATE` from `breeder_runtime`, create no UPDATE RLS policy, and install a database-owned no-update guard that rejects runtime UPDATE attempts. This boundary is database-enforced and is verified directly with the Breeder login; domain-service discipline is not a substitute. No runtime DELETE, TRUNCATE, role escalation or DDL is granted.
 
 Breeder API reads of Journal tanks, livestock or media use an admitted Journal service/API or a Journal-owned read projection. A same-database foreign key may validate existence without granting Breeder table read or write authority.
 
@@ -62,7 +75,7 @@ Every Breeder request follows this order:
 
 The owner-scope helper must fail closed if the scope is absent, malformed or changed during a transaction. It must not accept an end-user supplied authorization token, user ID or logical worker identity. The implementation review must prove that the Breeder login cannot bypass RLS, SET ROLE into a privileged identity, or alter owner scope after binding.
 
-RLS policies on breeder_* relations are explicit SELECT, INSERT and UPDATE policies for breeder_runtime. They require the current server-bound owner scope to equal row.owner_user_id. There is no FOR ALL policy. There is no runtime DELETE policy. A missing scope matches no row.
+RLS policies on breeder_* relations are explicit SELECT and INSERT policies for breeder_runtime, with explicit UPDATE policies only for the allowlisted mutable projection relations above; column scope is enforced by the corresponding column-scoped grants. They require the current server-bound owner scope to equal row.owner_user_id. There is no FOR ALL policy. There is no runtime DELETE policy. A missing scope matches no row.
 
 If the current Journal runtime-role hardening standard requires a different server-bound context mechanism, the Breeder adapter adopts that reviewed standard rather than weakening it.
 
@@ -93,6 +106,8 @@ Required negative tests include:
 - owner A reading owner B's Program, output, group, receipt or handoff;
 - owner A referencing owner B's tank or livestock UUID;
 - direct Breeder login attempting Journal table SELECT/INSERT/UPDATE/DELETE;
+- direct Breeder login attempting UPDATE on every append-only fact, operation, provenance, observation, disposition, quantity-ledger, handoff-history or committed-receipt relation;
+- direct Breeder login attempting an UPDATE outside the allowlisted mutable projection columns;
 - direct Breeder login attempting DELETE/TRUNCATE/DDL/role escalation;
 - missing, malformed or changed owner scope;
 - SET ROLE and session_user mismatch;
@@ -137,6 +152,6 @@ USING (owner_user_id = public.breeder_current_owner_user_id())
 WITH CHECK (owner_user_id = public.breeder_current_owner_user_id())
 ~~~
 
-There are separate SELECT, INSERT and UPDATE policies; no FOR ALL policy. A missing or malformed setting therefore matches no row. The helper and role grants must be covered by the disposable-Postgres verifier before the schema is admitted.
+There are separate SELECT and INSERT policies, plus UPDATE policies only for allowlisted mutable projection relations; column scope is enforced by the corresponding grants, and there is no FOR ALL policy. A missing or malformed setting therefore matches no row. The helper, role grants, no-update guards and relation-specific policies must be covered by the disposable-Postgres verifier before the schema is admitted.
 
 The runtime login is a real LOGIN role with session_user equal to current_user. SET ROLE, role inheritance into Journal capability roles, and client-side setting of the owner context are prohibited by the service boundary and tested as negative cases.

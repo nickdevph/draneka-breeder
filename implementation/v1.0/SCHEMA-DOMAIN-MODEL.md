@@ -20,7 +20,7 @@ This document freezes the domain model without executing it. Names are productio
 - Child-to-parent references use composite foreign keys containing owner_user_id wherever the parent is owner-scoped.
 - Parent tables expose UNIQUE(id, owner_user_id) constraints to support composite foreign keys.
 - Biological history is append-only or archived. Hard delete is not a product operation.
-- Mutable projections carry a revision integer. Create commands may omit expected_revision and establish revision 1; updates and commands against mutable existing state require expected_revision and optimistic concurrency. The schema field is nullable only for create operations.
+- Mutable projections carry a revision integer. Create commands may omit expected_revision and establish revision 1; updates and commands against mutable existing state require expected_revision and optimistic concurrency. Commands that mutate offspring groups use an exact expected_group_revisions vector with one entry per affected existing group. Revision expectation fields are nullable only for create operations.
 - All dates are timestamptz unless explicitly named local_date or local_time.
 - Quantity columns are non-negative numeric/integer values with an explicit unit. Quantity is never silently inferred from a display string.
 
@@ -29,7 +29,7 @@ This document freezes the domain model without executing it. Names are productio
 | Relation | Authority | Identity and owner scope | Mutable state | Lifecycle/delete |
 | --- | --- | --- | --- | --- |
 | breeder_programs | Breeder | id + owner_user_id | name, species context, status, revision | archive; restrict delete |
-| breeder_program_stock | Breeder | id + owner_user_id; program composite FK; optional Journal livestock composite FK | membership role, active disposition | append membership history; no destructive delete |
+| breeder_program_stock | Breeder | id + owner_user_id; program composite FK; optional Journal livestock composite FK | membership role, current disposition projection | append membership history; no destructive delete |
 | breeder_parentage_contexts | Breeder | id + owner_user_id; program composite FK | label/details only before use | immutable once referenced; archive context |
 | breeder_parentage_members | Breeder | id + owner_user_id; context composite FK | none after evidence use | append-only; no delete |
 | breeder_reproductive_outputs | Breeder | id + owner_user_id; program/context composite FKs | status metadata only; quantity authority is ledger | close/archive; no delete |
@@ -37,15 +37,16 @@ This document freezes the domain model without executing it. Names are productio
 | breeder_offspring_groups | Breeder | id + owner_user_id; program and tank composite FKs | stage, current tank, status, revision | archive/historical; no delete |
 | breeder_group_provenance | Breeder | id + owner_user_id; exactly one typed source FK | none | append-only; no delete |
 | breeder_group_operations | Breeder | id + owner_user_id; group composite FK | none | append-only command history |
-| breeder_quantity_ledger | Breeder | id + owner_user_id; operation composite FK | none | append-only; no delete |
+| breeder_output_operations | Breeder | id + owner_user_id; output composite FK | none | append-only output command/event history |
+| breeder_quantity_ledger | Breeder | id + owner_user_id; output/group operation-source composite FKs | none | append-only; no delete |
 | breeder_command_receipts | Breeder | unique owner + idempotency key | terminal status/readback reference | retention governed; no mutation of committed result |
 | breeder_evaluations | Breeder | id + owner_user_id; stock/group/session FK | none after observation | append-only observation |
 | breeder_selection_sessions | Breeder | id + owner_user_id; program FK | status and goal snapshot | close/archive; history preserved |
-| breeder_selection_members | Breeder | id + owner_user_id; session and subject FK | disposition review state | append-only revisions |
+| breeder_selection_members | Breeder | id + owner_user_id; session and subject FK | none after observation; current review is derived | append-only revisions |
 | breeder_dispositions | Breeder | id + owner_user_id; stock/group FK | none | append-only; current state is derived |
 | breeder_schedule_bindings | Breeder projection | id + owner_user_id; Journal schedule/followup reference | bind/suppress metadata | archive; Journal remains schedule owner |
 | breeder_lifecycle_suggestions | Breeder projection | deterministic id + owner_user_id | defer, dismiss, resolve state | append history or supersede |
-| breeder_commerce_handoffs | Breeder | id + owner_user_id; biological snapshot | handoff status only | append-only handoff history |
+| breeder_commerce_handoffs | Breeder | id + owner_user_id; biological snapshot | none after creation | immutable snapshot; status history is append-only |
 | breeder_commerce_handoff_media | Breeder association | id + owner_user_id; Journal media composite FK | none | handoff snapshot; no implicit additions |
 | breeder_commerce_reconciliations | AquaticFinder receipt; Breeder acceptance boundary | id + owner_user_id; handoff FK | none after receipt | append-only; never biological authority |
 
@@ -237,7 +238,7 @@ operation_type text not null:
 operation_at timestamptz not null
 actor_user_id uuid not null
 idempotency_key text not null
-expected_revision integer null
+expected_group_revisions jsonb null
 primary_group_id uuid not null
 notes text null
 created_at timestamptz not null
@@ -247,7 +248,31 @@ foreign key (primary_group_id, owner_user_id)
   references breeder_offspring_groups(id, owner_user_id)
 ~~~
 
-Operation rows are append-only. A move or stage change has no quantity ledger line. A split or merge writes all affected groups in one transaction.
+Operation rows are append-only. `expected_group_revisions` is null only for `CREATE`; otherwise it is the canonical ascending-UUID array of `{groupId, revision}` entries supplied in the request, containing exactly every affected existing mutable group. The service locks that exact set, compares every revision, and rejects a missing, extra, duplicate or stale entry before any operation, provenance or ledger write. A move or stage change has no quantity ledger line. A split or merge writes all affected groups in one transaction and records the same revision vector that it validated.
+
+### breeder_output_operations
+
+Required fields:
+
+~~~text
+id uuid primary key
+owner_user_id uuid not null
+reproductive_output_id uuid not null
+operation_type text not null:
+  OUTPUT_CREATED | OUTPUT_REMOVED | HATCH_MATERIALIZED
+operation_at timestamptz not null
+actor_user_id uuid not null
+idempotency_key text not null
+expected_revision integer null
+notes text null
+created_at timestamptz not null
+unique(owner_user_id, idempotency_key)
+unique(id, owner_user_id)
+foreign key (reproductive_output_id, owner_user_id)
+  references breeder_reproductive_outputs(id, owner_user_id)
+~~
+
+Output operation rows are append-only. `expected_revision` is null only for `OUTPUT_CREATED`; output updates/commands such as hatch materialization require the current scalar expected revision for that output. This is the durable output-level source for output quantity events and does not create or require a dummy offspring group.
 
 ### breeder_quantity_ledger
 
@@ -256,7 +281,8 @@ Required fields:
 ~~~text
 id uuid primary key
 owner_user_id uuid not null
-operation_id uuid not null
+group_operation_id uuid null
+output_operation_id uuid null
 offspring_group_id uuid null
 reproductive_output_id uuid null
 entry_type text not null:
@@ -267,12 +293,17 @@ quantity_unit text not null
 source_observation_id uuid null
 created_at timestamptz not null
 unique(id, owner_user_id)
-foreign keys use owner composites
+foreign key (group_operation_id, owner_user_id)
+  references breeder_group_operations(id, owner_user_id)
+foreign key (output_operation_id, owner_user_id)
+  references breeder_output_operations(id, owner_user_id)
+foreign keys for biological owners use owner composites
 check quantity_delta <> 0
+check exactly one of group_operation_id or output_operation_id is non-null
 check exactly one biological owner of the entry
 ~~~
 
-A transaction locks all affected output/group rows, validates non-negative resulting balances, then inserts ledger entries. Quantity read models are sums over committed ledger entries; any cached display is disposable.
+A transaction locks all affected output/group rows, validates non-negative resulting balances and the entry-type/operation-source pairing, then inserts the append-only operation/event source and ledger entries. `OUTPUT_CREATED`, `OUTPUT_REMOVED` and `HATCH_MATERIALIZED` use `output_operation_id` plus `reproductive_output_id` and no group operation; group entries use `group_operation_id` plus `offspring_group_id` and no output operation. Quantity read models are sums over committed ledger entries; any cached display is disposable. The ledger remains the one biological quantity authority.
 
 ### breeder_command_receipts
 
@@ -561,7 +592,9 @@ All relations in this document:
 
 - are owned by journal_migrator;
 - have RLS enabled and forced;
-- expose explicit SELECT/INSERT/UPDATE policies to breeder_runtime only;
+- expose explicit SELECT and INSERT policies to breeder_runtime only;
+- expose column-scoped UPDATE grants and relation-specific UPDATE policies only for the mutable context/projection relations listed in RUNTIME-SECURITY-MODEL.md;
+- expose no runtime UPDATE grant or policy for append-only facts, operations, provenance, observations, dispositions, quantity ledger, handoff history or committed receipts; the database-enforced no-update boundary is part of migration qualification;
 - use the server-bound owner scope described in RUNTIME-SECURITY-MODEL.md;
 - deny runtime DELETE/TRUNCATE/DDL;
 - use owner composite foreign keys for Breeder parents and Journal references where technically possible;

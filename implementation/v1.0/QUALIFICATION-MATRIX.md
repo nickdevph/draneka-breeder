@@ -57,7 +57,8 @@ Run on disposable Postgres:
 - marker/precondition rejects a wrong Journal base or migration collision;
 - migration is idempotent;
 - rollback/compensating script is proven before data;
-- runtime role has only admitted grants;
+- runtime role has SELECT/INSERT on admitted relations and column-scoped UPDATE only on mutable context/projection relations;
+- direct UPDATE of append-only facts, output/group operations, provenance, observations, dispositions, quantity ledger, handoff history or committed receipts is denied by grant, RLS policy and the database no-update guard;
 - RLS is enabled and forced;
 - owner A cannot read or write owner B;
 - cross-user Journal tank/livestock/media composite FKs fail;
@@ -85,7 +86,10 @@ The current provider readback has no Breeder foundation tables; `public.catalogu
 - duplicate different-hash idempotency conflicts;
 - create commands may omit expected revision and establish revision 1;
 - updates and commands against mutable existing state reject a missing expected revision;
-- stale revision conflicts;
+- output creation before any offspring group writes an output operation source plus `OUTPUT_CREATED` ledger row with no group operation reference;
+- single-target mutable commands reject a stale expected revision;
+- group mutable commands require an exact canonical `expectedRevisions` vector containing every affected existing group, reject missing/extra/duplicate entries, and reject the whole transaction when any one group is stale;
+- the persisted `expected_group_revisions` operation representation matches the validated request vector;
 - concurrent split/merge cannot overspend quantity or deadlock;
 - transaction rollback leaves no partial biological state.
 

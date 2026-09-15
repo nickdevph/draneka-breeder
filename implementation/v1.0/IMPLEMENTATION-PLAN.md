@@ -267,7 +267,7 @@ prepareCommerceHandoff
 reconcileCommerceOutcome
 ~~~
 
-Create commands may omit expected revision because they establish a new revision-1 record. Updates and commands against mutable existing state must provide the current expected revision; missing or stale values are rejected. Every command otherwise resolves the owner from a verified Core session, validates all same-owner references, uses an idempotency key, performs one database transaction, returns committed readback and emits an auditable command receipt.
+Create commands may omit expected revision because they establish a new revision-1 record. Single-target updates and commands against mutable existing state must provide the current expected revision. Commands that mutate offspring groups must instead provide `expectedRevisions`, an exact unique list of `{groupId, revision}` entries for every affected existing mutable group; a one-group command has one entry, while split/merge includes every affected source/destination group. The service sorts and locks that set deterministically, rejects missing, extra, duplicate or stale entries for any group before writing, and stores the same canonical vector as `expected_group_revisions` on the append-only group operation. Newly created groups omit an entry because create semantics establish revision 1. Every command otherwise resolves the owner from a verified Core session, validates all same-owner references, uses an idempotency key, performs one database transaction, returns committed readback and emits an auditable command receipt.
 
 Journal-owned writes—feeding, water tests, ordinary observations, media creation and schedule completion—call Journal's canonical service or API. Breeder may persist an explicit Breeder-to-Journal binding, but does not bypass Journal domain validation.
 
@@ -314,7 +314,7 @@ Initial Breeder release is prospective.
 | BREEDER-FOUNDATION-001A | Journal PR from current exact Journal main | local migration sequence 029; fresh provider timestamp assigned at implementation | schema, role, RLS, FK, retention and disposable-DB PASS |
 | BREEDER-FOUNDATION-001B | Breeder repository | 001A qualified on disposable DB | auth adapter, domain commands, idempotency and API PASS |
 | BREEDER-FOUNDATION-001C | Breeder repository | 001B API | Today/Programs/output/hatch/group/tank web slice and readback PASS |
-| P4-GROWOUT-002 | Breeder + Journal only where needed | foundation slice | count/move/split/merge/loss/stage/provenance PASS |
+| P4-GROWOUT-002 | Breeder + Journal only where needed | foundation slice | count/move/split/merge/loss/stage/provenance and per-affected-group revision-vector PASS |
 | P5-SELECTION-003 | Breeder | grow-out provenance | evaluation, goals, disposition and Pair Builder guardrails PASS |
 | P6-ROUND-004 | Breeder + Journal schedule adapter | selection/domain foundation | projection/action/fact separation and schedule integration PASS |
 | P7-COMMERCE-005 | Breeder + AquaticFinder contract | stable biological model | AquaticFinder-owned allocation/outcome receipts, non-negative and no-over-allocation reconciliation, external-reference/idempotency and non-mutating biological boundary PASS |
@@ -343,6 +343,7 @@ Implement only:
 - breeder_offspring_groups;
 - breeder_group_provenance;
 - breeder_group_operations;
+- breeder_output_operations;
 - breeder_quantity_ledger;
 - breeder_command_receipts;
 - same-owner composite references to Journal tanks and optional Journal livestock;
@@ -368,7 +369,7 @@ verified Core session
   -> committed readback
 ~~~
 
-The service must reject cross-user tank/livestock UUIDs, duplicate idempotency with a different request hash, missing or stale revisions on mutable-state commands, invalid quantities and unsupported provenance claims. It does not implement the deferred P7 commerce contract.
+The service must reject cross-user tank/livestock UUIDs, duplicate idempotency with a different request hash, missing or stale scalar revisions on mutable-state commands, missing/extra/duplicate/stale per-group revision entries on group commands, invalid quantities and unsupported provenance claims. Recording an output or hatch must create the matching output-level operation/event source and ledger row without requiring an offspring group; the ledger remains the sole biological quantity authority. It does not implement the deferred P7 commerce contract.
 
 ### 001C — web
 
@@ -383,6 +384,8 @@ Every package must use the matrix in QUALIFICATION-MATRIX.md. Required dimension
 - owner isolation/RLS and cross-user composite-FK failures;
 - least-privilege runtime-role verification;
 - transaction, concurrency and idempotency;
+- output-level operation/ledger linkage before any offspring group exists;
+- database-enforced append-only relation immutability and mutable-projection-only UPDATE grants/policies;
 - API integration and committed readback;
 - Playwright E2E at 320, 390, 768 and 1440 CSS widths;
 - keyboard/focus/accessibility;

@@ -2,7 +2,7 @@
 # Breeder v1.0 Web Architecture
 
 Status: CORRECTED IMPLEMENTATION PLAN / FRESH REVIEW REQUIRED
-Product authority: canonical holistic v1.0 exact artifact  
+Product authority: canonical holistic v1.0 exact artifact
 Initial app: separate web application in nickdevph/draneka-breeder
 
 The authenticated shell binds to the real existing Core server-side session contract at implementation admission. Core remains the identity/session authority; Breeder verifies the admitted Core session server-side and derives owner identity there. Browser fields cannot select an owner, and browser/mobile clients never receive database credentials. This plan does not create a Breeder auth store, new Supabase project, or production deployment.

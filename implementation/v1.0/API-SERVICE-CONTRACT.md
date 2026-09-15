@@ -57,7 +57,7 @@ For a reconciliation receipt, `allocationQuantity` and `outcomeQuantity` are non
 
 ## 3. Mutation envelope
 
-Every mutation requires an idempotency key and payload. `expectedRevision` is optional for create commands that establish a new revision-1 record, and required for updates or commands against mutable existing state.
+Every mutation requires an idempotency key and payload. Create commands establish a new revision-1 record and omit an expected revision. Updates and commands against mutable existing state require `expectedRevision`; commands that mutate one or more existing offspring groups use the per-group `expectedRevisions` vector defined below.
 
 Create envelope:
 
@@ -77,6 +77,21 @@ Mutable-state command envelope:
   "payload": {}
 }
 ~~~
+
+Group mutable-command envelope:
+
+~~~json
+{
+  "idempotencyKey": "client-generated stable key",
+  "expectedRevisions": [
+    { "groupId": "affected-group-uuid-a", "revision": 3 },
+    { "groupId": "affected-group-uuid-b", "revision": 7 }
+  ],
+  "payload": {}
+}
+~~~
+
+`expectedRevisions` is required for every command that mutates an existing offspring group. It contains exactly one entry for every affected existing mutable group, including every source and destination group whose state, revision or quantity changes; a single-group command therefore has one entry. Entries are unique, contain positive integer revisions, and are canonicalized in ascending UUID order before the operation is stored. Newly created groups are not entries because create semantics establish their revision 1. The server locks that exact group set in the same order, rejects a missing vector with `EXPECTED_REVISIONS_REQUIRED`, rejects an extra, duplicate, malformed or otherwise mismatched vector with `EXPECTED_REVISIONS_INVALID`, rejects a stale value with `REVISION_CONFLICT`, and writes nothing unless every affected group's locked revision matches.
 
 The server validates the key and request hash before business mutation.
 
@@ -116,7 +131,7 @@ The server normalizes text, rejects blank names and returns the committed Progra
 }
 ~~~
 
-The command creates the output and its OUTPUT_CREATED ledger entry in one transaction. It cannot reference another owner's Program or parentage context.
+The command creates the output, an append-only output operation/event row with `operationType = OUTPUT_CREATED`, and its `OUTPUT_CREATED` ledger entry in one transaction. The ledger row references that output operation through `output_operation_id`, has no group operation source and requires no offspring group. It cannot reference another owner's Program or parentage context.
 
 ### Record hatch/recruitment
 
@@ -135,7 +150,7 @@ The command creates the output and its OUTPUT_CREATED ledger entry in one transa
 }
 ~~~
 
-One accepted observation creates one HATCH_MATERIALIZED ledger entry. The command rejects a quantity greater than the remaining output quantity and rejects an attempt to materialize the same observation twice.
+One accepted observation creates an append-only output operation/event row with `operationType = HATCH_MATERIALIZED` and one `HATCH_MATERIALIZED` ledger entry referencing that output operation. No offspring group is required. The command rejects a quantity greater than the remaining output quantity and rejects an attempt to materialize the same observation twice.
 
 ### Create offspring group
 
@@ -153,18 +168,20 @@ One accepted observation creates one HATCH_MATERIALIZED ledger entry. The comman
 }
 ~~~
 
-The group creation transaction verifies the hatch/output provenance and writes GROUP_CREATED quantity plus provenance. The current tank is a Journal reference, not a Breeder-owned tank.
+The group creation transaction verifies the hatch/output provenance, writes an append-only group operation/event row with `operationType = CREATE`, then writes `GROUP_CREATED` quantity plus provenance. The current tank is a Journal reference, not a Breeder-owned tank.
 
 ## 5. Transaction and concurrency rules
 
-- lock all affected Breeder parent and group rows in deterministic UUID order;
-- validate expected_revision before inserting ledger entries;
+- lock all affected Breeder parent, output and group rows in deterministic UUID order;
+- for output-level quantity events, insert the output operation/event source and ledger row with matching owner/output constraints; no group operation is required;
+- for group commands, validate the exact `expectedRevisions` set and every locked revision before inserting operation, provenance or ledger entries;
+- store the canonical `expectedRevisions` vector on the group operation as `expected_group_revisions`;
 - insert command receipt and biological events in the same transaction;
 - use composite owner foreign keys and owner predicates on every read;
 - never call a remote Journal API while holding a biological transaction lock;
 - validate Journal-owned references before the transaction, then let the composite FK reject deletion/race;
-- return REVISION_CONFLICT on a stale command;
-- use deterministic lock ordering for split/merge to prevent deadlock;
+- return `EXPECTED_REVISIONS_REQUIRED` for a missing group vector, `EXPECTED_REVISIONS_INVALID` for a malformed/mismatched vector and `REVISION_CONFLICT` for a stale value;
+- use deterministic lock ordering for split/merge, and reject the whole transaction if any affected group is missing or stale;
 - commit before returning readback.
 
 ## 6. Journal integration
@@ -196,6 +213,8 @@ QUANTITY_EXCEEDS_REMAINING
 PROVENANCE_INCOMPLETE
 PROVENANCE_CONFLICT
 REVISION_CONFLICT
+EXPECTED_REVISIONS_REQUIRED
+EXPECTED_REVISIONS_INVALID
 IDEMPOTENCY_CONFLICT
 COMMAND_ALREADY_COMMITTED
 INVALID_STATE_TRANSITION
@@ -226,7 +245,7 @@ A cached projection is disposable and rebuildable from append-only Breeder recor
 
 ## 9. API test contract
 
-The API suite must prove happy paths, create-without-revision, required mutable-state revision, missing/stale revision rejection, retry idempotency, concurrent split/merge, cross-user references, malformed provenance, quantity conservation, privacy, error recovery and committed readback. The deferred P7 commerce suite must additionally prove non-negative allocation/outcome, no cumulative over-allocation or over-outcome without an approved exception, duplicate external-reference and idempotency handling, and no biological-ledger mutation on rejection. It must run against disposable Postgres and a deterministic Core-session test adapter; no production credentials are used.
+The API suite must prove happy paths, create-without-revision, required mutable-state revision, missing/stale revision rejection, retry idempotency, output creation before any offspring group with its output-operation/ledger linkage, concurrent split/merge, cross-user references, malformed provenance, quantity conservation, privacy, error recovery and committed readback. For group commands it must prove the exact per-affected-group vector, rejection of missing/extra/duplicate entries, rejection when any one affected group is stale, deterministic lock ordering and no partial operation/ledger write. The deferred P7 commerce suite must additionally prove non-negative allocation/outcome, no cumulative over-allocation or over-outcome without an approved exception, duplicate external-reference and idempotency handling, and no biological-ledger mutation on rejection. It must run against disposable Postgres and a deterministic Core-session test adapter; no production credentials are used.
 
 ## 10. Parent/source context endpoint
 
