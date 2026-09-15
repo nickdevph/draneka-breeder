@@ -16,7 +16,7 @@ The Drive object remains immutable. This promotion decision does not alter its b
 
 ## Canonical predecessor
 
-Until PR #11 merges, the current repository-canonical holistic authority remains corrected v0.9:
+At promotion time, before PR #11 merged, the current repository-canonical holistic authority remained corrected v0.9:
 
 - Artifact: `DRANEKA-AQUARIUM-BREEDER-HOLISTIC-PROTOTYPE-V0.9-COMMERCE-HANDOFF-EVIDENCE-SECOND-BOUNDED-CORRECTION-CANDIDATE.html`
 - Google Drive ID: `1sZ6TOO25Otne0S5Atbul6s4SRHQMnN-4`
@@ -64,7 +64,7 @@ The fresh review independently established:
 
 The corrected v1.0 artifact resolves all five independent review findings without introducing a promotion-blocking regression in the canonical v0.9–v0.5 authority stack. The full simplify-and-qualify product objective survives independent usability, accessibility, responsive and regression qualification.
 
-The exact SHA-256-bound artifact above is therefore promoted as the holistic v1.0 product/design authority **subject to repository canonicalization by merge of PR #11**.
+The exact SHA-256-bound artifact above was promoted as the holistic v1.0 product/design authority subject to repository canonicalization by merge of PR #11.
 
 This promotion is limited to the prototype product/design authority proven by the independent review. It does not infer implementation readiness beyond the explicit evidence boundary.
 
@@ -79,11 +79,13 @@ HOLISTIC_V1_0_INDEPENDENT_REVIEW = PASS
 HOLISTIC_V1_0_FOUNDER_PROMOTION = APPROVED
 HOLISTIC_V1_0_PROMOTED_SHA256 = 4746694d3c40ec03177fb07723248e3373963894c94e66061b676ae3dbc2ab5d
 PR_11_MERGE = AUTHORIZED
-HOLISTIC_V1_0_CANONICAL = NO_UNTIL_MERGE
+HOLISTIC_V1_0_CANONICAL = YES_AFTER_MERGE
 ```
 
 ## Authority boundary
 
 This promotion changes holistic product/design prototype authority only. It does **not** authorize Android implementation, production web implementation, backend/API/schema/database mutation, production AquaticFinder commerce integration, marketplace/channel execution, payment/order/shipping, deployment, signing, release, or later-version work.
 
-Merge of PR #11 to `main` is the remaining repository-governance step required to canonicalize this exact corrected holistic v1.0 authority.
+## Repository canonicalization readback
+
+PR #11 merged to `main` at `1baee0e1b2a57f056dccc3c6db834b78f88cfede`. The exact promoted artifact is therefore repository-canonical as product/design authority. This readback does not alter the immutable Drive object and does not authorize web implementation, Android implementation, backend/API/schema/database mutation, deployment or release.
