@@ -1,9 +1,11 @@
 
 # Breeder v1.0 API and Domain Service Contract
 
-Status: IMPLEMENTATION-READY PLAN  
+Status: CORRECTED IMPLEMENTATION PLAN / FRESH REVIEW REQUIRED
 Transport: versioned JSON HTTP under /api/v1  
 Authority: Breeder domain service; Journal service remains owner for Journal facts
+
+The real Core-auth binding is the existing server-side Core session contract selected and re-read at implementation admission. Breeder must not create a parallel identity/session store, accept a caller-supplied owner identity, or treat a browser field as authorization. The corrected plan is bound to existing Journal Supabase project `sjodccpuyaasljcunmug`; it does not qualify a production runtime or migration.
 
 ## 1. Request boundary
 

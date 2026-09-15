@@ -1,7 +1,7 @@
 
 # Breeder v1.0 Runtime Security and RLS Model
 
-Status: IMPLEMENTATION-READY PLAN  
+Status: CORRECTED IMPLEMENTATION PLAN / SECURITY QUALIFICATION NOT RUN
 Physical database: existing Journal Supabase project  
 Security rule: Breeder must not inherit broad Journal runtime privileges
 
@@ -18,7 +18,7 @@ No browser, Android client, request body, query parameter or caller-controlled G
 
 ## 2. Roles
 
-The first Journal migration after the final reviewed Journal 024 hardening must create or qualify:
+The planned Journal migration must create or qualify the following after current Journal main is re-read and local sequence 029 is assigned:
 
 ~~~text
 breeder_runtime       NOLOGIN capability role
@@ -70,17 +70,19 @@ If the current Journal runtime-role hardening standard requires a different serv
 
 A syntactically valid UUID is never enough.
 
-- Journal migration 025 must prove composite uniqueness for journal_tanks(id, owner_user_id), journal_livestock(id, owner_user_id) and journal_media_assets(id, owner_user_id) before adding composite foreign keys.
+- Journal migration 029 must prove composite uniqueness for journal_tanks(id, owner_user_id), journal_livestock(id, owner_user_id) and journal_media_assets(id, owner_user_id) before adding composite foreign keys.
 - Breeder commands validate the target row through the Journal-owned service/API with the verified owner.
 - The database composite FK rejects an owner mismatch even if a service bug supplies a foreign UUID.
 - archived Journal rows are treated according to the domain contract; they are never silently substituted for another user's active row.
 - any failed scope check returns OWNER_SCOPE_DENIED and creates no biological record.
 
-## 6. Journal 024 collision and dependency
+## 6. Current Journal authority and migration collision
 
-The current Journal main is 5f00cf5106e3127a8dfb55ab59407d262f1e8d16. PR #873 currently owns the runtime-role/RLS hardening at 829618fe2d3f20a64703021676032be429079fd3 and migration 024.
+The current Journal main is `897ce087d0d42dac25eabe23b05b00a605f23644`, with local migration tail `028-core-journal-pr5-refresh-token-replacement-index-convergence.sql`. The parent-supplied provider readback reports 34 applied migrations, latest `20260915093928` (`af_pr5_temp_target_recovery_read_20260915_001`).
 
-BREEDER-FOUNDATION-001A must not begin its migration work until the final reviewed Journal 024 is merged. The Breeder migration is 025 and must require the exact final 024 marker family. If #873 changes, the 025 base and marker precondition are re-bound before implementation.
+PR #873 is open non-draft, stale/diverged and unmerged historical work at `829618fe2d3f20a64703021676032be429079fd3`; its claimed migration 024 is not current authority and is not a Breeder dependency. BREEDER-FOUNDATION-001A must bind to current Journal main and use planned local sequence 029, never historical 025. A fresh provider timestamp must be assigned by the Journal migration owner at implementation time, strictly after the supplied provider maximum, then read back.
+
+The provider currently has no Breeder foundation tables; the only matching public table is `public.catalogue_breeder_attributions` with RLS enabled and zero rows. Security advisors currently report 16 mutable-function-search-path warnings. Therefore least-privilege/RLS is a required implementation gate, not a current security PASS.
 
 ## 7. Security tests
 
@@ -107,7 +109,7 @@ The Journal-owned account deletion/export/retention path must include breeder_* 
 
 ## 9. Non-effects
 
-This plan does not alter Journal PR #873, create a role, grant a privilege, run SQL or mutate any Supabase project. It is a security design and qualification contract only.
+This plan does not alter Journal PR #873, create a role, grant a privilege, run SQL or mutate any Supabase project. It is a security design and qualification contract only. The real Core-auth binding remains the current server-side Core session contract; it must be re-read and proven before 001B, and no caller-supplied owner identity is accepted.
 
 ## 10. Exact owner-scope binding contract
 

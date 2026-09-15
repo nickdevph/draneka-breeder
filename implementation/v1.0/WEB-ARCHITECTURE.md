@@ -1,9 +1,11 @@
 
 # Breeder v1.0 Web Architecture
 
-Status: IMPLEMENTATION-READY PLAN  
+Status: CORRECTED IMPLEMENTATION PLAN / FRESH REVIEW REQUIRED
 Product authority: canonical holistic v1.0 exact artifact  
 Initial app: separate web application in nickdevph/draneka-breeder
+
+The authenticated shell binds to the real existing Core server-side session contract at implementation admission. Core remains the identity/session authority; Breeder verifies the admitted Core session server-side and derives owner identity there. Browser fields cannot select an owner, and browser/mobile clients never receive database credentials. This plan does not create a Breeder auth store, new Supabase project, or production deployment.
 
 ## 1. Technology
 
@@ -51,7 +53,7 @@ The shell:
 5. carries only server-issued session cookies or the existing approved Core session mechanism;
 6. shows a recoverable error when Core or Breeder session verification is unavailable.
 
-The Breeder server owns Core session verification. Browser fields cannot select an account or owner subject.
+The Breeder server owns only the adapter boundary for Core session verification; Core remains the authority for the session and subject. Browser fields cannot select an account or owner subject.
 
 ## 4. Foundation screens
 
@@ -139,3 +141,5 @@ authenticated shell
 ~~~
 
 The browser test must also prove an owner-scope denial using a second test account and verify the recovery path for service, validation and empty states.
+
+The full v1.0 browser sequence remains gated behind the qualified 001A/001B contracts and must end in exact committed readback. Android, marketplace/payment/order/shipping execution, generic Journal redesign and new production infrastructure are excluded from this web plan.

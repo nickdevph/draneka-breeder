@@ -14,28 +14,29 @@ This repository preserves prototype authority, product/design evidence, qualific
 
 | Surface | Current authority | Status |
 | --- | --- | --- |
-| Holistic product/design | **v0.4 bounded-correction authority** | **Founder-promoted canonical** |
-| Holistic successor | **v0.5 cohort / egg-batch / population operations** | **Authorized for prototype iteration; non-canonical until separately reviewed/promoted and merged** |
-| Android adaptation | Android v0.1, derived from holistic v0.2 | Historical Android design evidence; **not v0.4 parity** |
-| Holistic predecessor | v0.3 lineage | Superseded as current holistic authority; retained immutably for lineage/provenance |
+| Holistic product/design | **v1.0 simplify / qualify bounded-correction authority** | **Founder-promoted and repository-canonical after merged PR #11** |
+| Holistic predecessor stack | v0.4 through v0.9 | Historical product/design authorities retained immutably for lineage, provenance and regression evidence |
+| Android adaptation | Android v0.1, derived from holistic v0.2 | Historical Android design evidence; **not v1.0 parity** |
 
-### Exact canonical v0.4 binding
+### Exact canonical v1.0 binding
 
-- Artifact: `DRANEKA-AQUARIUM-BREEDER-HOLISTIC-PROTOTYPE-V0.4-BOUNDED-CORRECTION-CANDIDATE.html`
-- SHA-256: `4f82843586c630d3e7542def1632feb8e5c5e766b7d9909e8e41d69b41163a16`
-- Size: `242549 bytes`
-- Durable Drive object: `19EXK4Gh5Da2_W_5HuUU-ws7feON7qMV7`
-- Authority record: `prototypes/holistic/v0.4/AUTHORITY.md`
-- Independent review: `reviews/2026-09-08-independent-v0.4-bounded-correction-review.md`
-- Founder decision: `decisions/0005-promote-holistic-v0.4.md`
+- Artifact: `DRANEKA-AQUARIUM-BREEDER-HOLISTIC-PROTOTYPE-V1.0-SIMPLIFY-QUALIFY-BOUNDED-CORRECTION-CANDIDATE.html`
+- SHA-256: `4746694d3c40ec03177fb07723248e3373963894c94e66061b676ae3dbc2ab5d`
+- Size: `458038 bytes`
+- Durable Drive object: `1zpWYG4igEMRm_Bv2HZJMgKrfXhVwL8c0`
+- Authority record: `prototypes/holistic/v1.0/PROMOTION.md`
+- Independent review: `reviews/holistic-v1.0-bounded-correction-independent-rereview-2026-09-09.md`
+- Founder decision: `prototypes/holistic/v1.0/PROMOTION.md`
 
 Terminal authority state:
 
-`DRANEKA_BREEDER_CANONICAL_HOLISTIC_PRODUCT_DESIGN_AUTHORITY = V0.4`
+`DRANEKA_BREEDER_CANONICAL_HOLISTIC_PRODUCT_DESIGN_AUTHORITY = V1.0`
 
-`DRANEKA_BREEDER_V0_4_BOUNDED_CORRECTION_INDEPENDENT_REVIEW = PASS`
+`DRANEKA_BREEDER_HOLISTIC_V1_0_BOUNDED_CORRECTION_INDEPENDENT_REVIEW = PASS`
 
-`DRANEKA_BREEDER_V0_4_FOUNDER_PROMOTION = APPROVED`
+`DRANEKA_BREEDER_HOLISTIC_V1_0_FOUNDER_PROMOTION = APPROVED`
+
+`DRANEKA_BREEDER_HOLISTIC_V1_0_REPOSITORY_CANONICALIZATION = PR_11_MERGED / YES`
 
 ## Prototype iteration workflow
 
@@ -56,9 +57,9 @@ Governing documents:
 
 v0.4 is the transition exception because it was already independently reviewed and founder-promoted before this model was adopted; no synthetic retroactive PR is required.
 
-## Canonical product rules inherited from v0.3 and qualified in v0.4
+## Canonical product rules inherited from the v0.3-v0.9 stack and qualified in v1.0
 
-Breeder remains a breeder-first product with a required web application direction and a dedicated Android client direction. v0.4 preserves the v0.3 lineage loop while generalizing the operating model so pair/spawn semantics are not forced onto every breeder workflow.
+Breeder remains a breeder-first product with a required web application direction and a dedicated Android client direction. v1.0 preserves the qualified predecessor lineage loop while generalizing the operating model so pair/spawn semantics are not forced onto every breeder workflow.
 
 Core lineage/provenance rules:
 
@@ -72,7 +73,7 @@ Core lineage/provenance rules:
 - phenotype does not imply genotype;
 - only a reproductive event can advance ancestry/generation semantics.
 
-v0.4 additionally locks:
+v1.0 additionally locks:
 
 - Breeding Program is lightweight durable context, not mandatory ceremony before breeder-native actions;
 - event-first Program creation is atomic with the initiating biological record;
@@ -94,7 +95,7 @@ v0.4 additionally locks:
 
 Planned sequence from the current authority:
 
-`v0.4 canonical`
+`v1.0 canonical`
 
 `-> v0.5 Cohort / egg-batch / population operations`
 
@@ -106,7 +107,7 @@ Planned sequence from the current authority:
 
 `-> v0.9 Commerce handoff / evidence`
 
-`-> v1.0 Simplify / qualify`
+`-> implementation planning and separate admission`
 
 ## v0.5 successor envelope
 
@@ -135,7 +136,7 @@ Commerce-channel operations are owned by **Draneka AquaticFinder**, not Breeder.
 1. Reviewed/promoted prototype versions are immutable; revisions use new version numbers.
 2. A newer holistic prototype does not silently amend an implementation cycle.
 3. Holistic product semantics are separate from client-specific Android/web adaptation details.
-4. Existing Android evidence cannot claim parity with holistic v0.4 until convergence is explicitly performed and reviewed.
+4. Existing Android evidence cannot claim parity with holistic v1.0 until convergence is explicitly performed and reviewed.
 5. Journal and Breeder may share account, tank, livestock, water, media, and event identity concepts; duplicate domain events should be avoided.
 6. Production backend/API/schema/database/deployment changes require a separate implementation-admission cycle.
 7. Durable research/roadmap documents inform future prototypes but do not themselves promote prototype authority.
@@ -145,8 +146,8 @@ Commerce-channel operations are owned by **Draneka AquaticFinder**, not Breeder.
 
 ## Current implementation state
 
-- Breeder web production implementation: **not admitted by v0.4 promotion**
-- Breeder Android source implementation: **not admitted by v0.4 promotion**
+- Breeder web production implementation: **not admitted by v1.0 promotion**
+- Breeder Android source implementation: **not admitted by v1.0 promotion**
 - Existing Journal Android implementation authority: **unchanged**
 
 The prototype repository is product/design authority and provenance, not automatic production implementation authority.

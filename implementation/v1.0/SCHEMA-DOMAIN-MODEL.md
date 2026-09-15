@@ -1,9 +1,13 @@
 
 # Breeder v1.0 Schema and Domain Model
 
-Status: IMPLEMENTATION-READY PLAN  
+Status: CORRECTED IMPLEMENTATION PLAN / FRESH REVIEW REQUIRED
 Physical database: existing Journal Supabase project sjodccpuyaasljcunmug  
-Migration authority: nickdevph/aquaticfinder-journal, first Breeder migration 025 after Journal 024 is merged
+Migration authority: nickdevph/aquaticfinder-journal at current exact main; planned local Breeder migration 029 after current local Journal prefix 028
+
+Current Journal main: `897ce087d0d42dac25eabe23b05b00a605f23644`.
+
+Planned migration identity: `029-journal-breeder-foundation.js` + `029-journal-breeder-foundation.sql`, status **PLANNED / UNAPPLIED**. The provider timestamp is **UNASSIGNED UNTIL JOURNAL IMPLEMENTATION TIME / UNAPPLIED**; the Journal migration owner must allocate a fresh timestamp after provider version `20260915093928` and read it back after apply. Historical `025` is already occupied in the Journal repository and is never reused.
 
 This document freezes the domain model without executing it. Names are production recommendations; the authority and invariants are mandatory.
 
@@ -325,7 +329,7 @@ If an existing relation cannot safely receive the required uniqueness proof, the
 
 ## 6. Rollback compatibility
 
-025 is additive and forward-only after production data exists. On disposable databases, a tested rollback may remove the entire unreferenced breeder foundation. On data-bearing targets, rollback is feature disable plus forward repair. No migration rewrites or destructive history cleanup are admitted.
+029 is additive and forward-only after production data exists. On disposable databases, a tested rollback may remove the entire unreferenced breeder foundation. On data-bearing targets, rollback is feature disable plus forward repair. No migration rewrites or destructive history cleanup are admitted.
 
 ## 7. Full v1.0 relation definitions
 
@@ -557,7 +561,7 @@ All relations in this document:
 - preserve created_at/recorded_at/effective_at timestamps rather than overwriting facts;
 - use archive/status or supersede links instead of hard deletion;
 - are included in the Journal account lifecycle and export contract;
-- are added additively by Journal migration 025 or later package migrations;
+- are added additively by Journal migration 029 or later package migrations;
 - are safe to ignore by older Journal application code because they are additive and feature-gated.
 
 If a database constraint cannot be expressed safely, the write is rejected in the domain service and the missing constraint is a production-admission blocker, not a reason to accept an unchecked UUID or mutable fact.

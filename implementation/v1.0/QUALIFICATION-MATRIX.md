@@ -1,7 +1,7 @@
 
 # Breeder v1.0 Test and Qualification Matrix
 
-Status: IMPLEMENTATION-READY PLAN  
+Status: CORRECTED IMPLEMENTATION PLAN / FRESH INDEPENDENT REVIEW REQUIRED
 Qualification target: implementation admission, not prototype-only confidence
 
 ## 1. Required evidence classes
@@ -52,8 +52,9 @@ A screenshot, static HTML prototype or passing mock-only test is not sufficient.
 
 Run on disposable Postgres:
 
-- migration applies from current Journal base plus final 024;
-- marker precondition rejects wrong base;
+- migration applies from the exact current Journal main at implementation admission, after local migration prefix 028 and as planned local sequence 029;
+- a fresh provider timestamp is assigned after provider version 20260915093928 and is read back after apply; this plan claims no provider application;
+- marker/precondition rejects a wrong Journal base or migration collision;
 - migration is idempotent;
 - rollback/compensating script is proven before data;
 - runtime role has only admitted grants;
@@ -65,6 +66,8 @@ Run on disposable Postgres:
 - no runtime DELETE/TRUNCATE/DDL;
 - account deletion/export/retention includes breeder_*;
 - private media cannot enter public handoff.
+
+The current provider readback has no Breeder foundation tables; `public.catalogue_breeder_attributions` is the only matching public table, with RLS enabled and zero rows. Security advisors report 16 mutable-function-search-path warnings, so no security PASS may be inferred from this plan.
 
 ## 4. Domain and concurrency gates
 
@@ -98,18 +101,20 @@ Run on disposable Postgres:
 - empty, loading, validation, dependency failure and retry states pass;
 - second-account cross-user denial passes in browser E2E.
 
+The required first vertical E2E sequence is: real Core-authenticated shell -> Today -> Programs -> create Program -> record output -> explicit hatch -> create offspring group -> link same-owner Journal tank -> refresh -> exact committed readback. The browser must never receive database credentials or choose owner identity.
+
 ## 6. Journal regression rule
 
-Any Journal PR carrying 025 or changing bootstrap, roles, grants, account deletion or shared Journal relations must run:
+Any Journal PR carrying local migration sequence 029 or changing bootstrap, roles, grants, account deletion or shared Journal relations must run:
 
 - focused Breeder migration/security tests;
 - Journal runtime-role verifier;
 - Journal database-guard and disposable-database isolation tests;
 - relevant Journal full test/build suite;
-- Android/JI regression gates required by the final Journal 024 review;
+- relevant Android/JI regression gates required by the current Journal shared-boundary review;
 - exact-head independent review.
 
-A Breeder PR cannot claim shared-database readiness while the corresponding Journal PR is unmerged or its required gates are red.
+A Breeder PR cannot claim shared-database readiness while the corresponding Journal PR is unmerged, the real Core-auth binding is unresolved, or required gates are red.
 
 ## 7. Admission evidence bundle
 

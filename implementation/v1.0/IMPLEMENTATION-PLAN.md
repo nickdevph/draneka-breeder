@@ -1,8 +1,31 @@
 
 # Draneka Aquarium Breeder v1.0 — Production Implementation Plan
 
-Date: 2026-09-09  
-Status: **IMPLEMENTATION-READY PLANNING / NO PRODUCTION MUTATION / NO PRODUCTION SOURCE IMPLEMENTATION**
+Date: 2026-09-15
+Status: **CORRECTED IMPLEMENTATION PLANNING / FRESH INDEPENDENT REVIEW REQUIRED / NO PRODUCTION MUTATION / NO PRODUCTION SOURCE IMPLEMENTATION**
+
+This is a bounded planning-authority correction. The prior planning review is stale after this exact-head change; it is not evidence for the corrected candidate.
+
+### Current authority rebind at correction start
+
+~~~text
+BREEDER_MAIN = 1baee0e1b2a57f056dccc3c6db834b78f88cfede
+PR12_BASE = 1baee0e1b2a57f056dccc3c6db834b78f88cfede
+PR12_HEAD_BEFORE_CORRECTION = bc19e6fc6f86699373b1f053c308a7b05fb58aa1
+PR12_STATE = OPEN / DRAFT / UNMERGED
+
+JOURNAL_MAIN = 897ce087d0d42dac25eabe23b05b00a605f23644
+JOURNAL_LOCAL_MIGRATION_TAIL = 028-core-journal-pr5-refresh-token-replacement-index-convergence.sql
+JOURNAL_PROVIDER_APPLIED_COUNT_AT_READBACK = 34
+JOURNAL_PROVIDER_LATEST_VERSION_AT_READBACK = 20260915093928
+JOURNAL_PROVIDER_LATEST_NAME_AT_READBACK = af_pr5_temp_target_recovery_read_20260915_001
+
+BREEDER_REPOSITORY_MIGRATION = 029-journal-breeder-foundation.js + 029-journal-breeder-foundation.sql
+BREEDER_REPOSITORY_MIGRATION_STATUS = PLANNED / UNAPPLIED
+BREEDER_PROVIDER_MIGRATION_VERSION = ASSIGN FRESH TIMESTAMP AT JOURNAL IMPLEMENTATION TIME / UNAPPLIED
+~~~
+
+The provider readback above is the parent-supplied live readback at this execution point. It does not apply or qualify the planned Breeder migration.
 
 This plan is the execution contract for implementing the exact canonical holistic v1.0 product. It freezes the boundaries below so implementation can proceed without reopening foundational architecture.
 
@@ -155,30 +178,43 @@ Journal main is currently:
 
 ~~~text
 nickdevph/aquaticfinder-journal
-main = 5f00cf5106e3127a8dfb55ab59407d262f1e8d16
-current main migration = 023-journal-ji-browser-result-handoff
+main = 897ce087d0d42dac25eabe23b05b00a605f23644
+current local migration tail = 028-core-journal-pr5-refresh-token-replacement-index-convergence.sql
+current provider readback = 34 applied; latest 20260915093928 / af_pr5_temp_target_recovery_read_20260915_001
 ~~~
 
-Journal PR #873 is the active runtime-role/RLS hardening candidate:
+The current Journal main is the planning base. Its local migration namespace already contains `024-core-journal-target-*`, `025-core-journal-pr4-schema-convergence.sql`, `026`, `027` and `028`; therefore historical `025` is occupied and cannot be reused.
+
+Journal PR #873 is stale, unmerged historical work requiring a separate current-head disposition:
 
 ~~~text
 PR #873
 base = 5f00cf5106e3127a8dfb55ab59407d262f1e8d16
 head = 829618fe2d3f20a64703021676032be429079fd3
-migration = 024-journal-ji-runtime-role-rls-hardening
-state = OPEN / NOT MERGED
+migration claim = historical 024 runtime-role/RLS hardening
+state = OPEN / NON-DRAFT / STALE AND DIVERGED / NOT MERGED
+Breeder dependency = NONE
 ~~~
 
-No Breeder database migration may be based on or compete with the unmerged #873 line. After #873 reaches its independently reviewed final head and merges, the first Breeder migration is frozen as:
+Do not copy PR #873, use its migration claim, or wait for it as a Breeder dependency. The Core→Journal consolidation and subsequent migration order are bound to current Journal main, not the stale PR #873 line. Any future #873 disposition is separate work and must be requalified at its own current head.
+
+The next valid Breeder repository migration identity is planned as:
 
 ~~~text
-025-journal-breeder-foundation.js
-025-journal-breeder-foundation.sql
+029-journal-breeder-foundation.js
+029-journal-breeder-foundation.sql
+repository status = PLANNED / UNAPPLIED
+provider version = FRESH TIMESTAMP TO BE ASSIGNED BY JOURNAL MIGRATION OWNER AT IMPLEMENTATION TIME,
+                  STRICTLY AFTER 20260915093928, THEN READ BACK
 ~~~
+
+The local zero-padded sequence is authoritative for repository ordering. The provider timestamp is assigned only when the Journal implementation registers/applies the migration against the then-current exact head; no provider version is claimed as applied here.
+
+At the supplied provider readback, no Breeder foundation tables are present. The only matching public table is `public.catalogue_breeder_attributions` with RLS enabled and zero rows. Relevant Journal tables have RLS enabled. Security advisors report 16 mutable-function-search-path warnings, so this plan records no security PASS.
 
 The migration must:
 
-1. require the Journal marker family from final version 024;
+1. require the exact current Journal main marker/state and the implementation-time migration precondition;
 2. execute only as journal_migrator or an explicitly admitted migration actor;
 3. execute through both current Journal bootstrap entrypoints;
 4. create only the minimum breeder_* foundation tables, constraints, roles, grants, RLS and account-retention hooks needed by BREEDER-FOUNDATION-001;
@@ -254,8 +290,8 @@ Initial Breeder release is prospective.
 
 | Package | Owner/repository | Dependency | Completion gate |
 | --- | --- | --- | --- |
-| P0 / PLAN-001 | Draneka Breeder PR #12 | canonical v1.0 + live Journal inspection | this plan and independent review PASS |
-| BREEDER-FOUNDATION-001A | Journal PR after #873 | final merged Journal 024 | schema, role, RLS, FK, retention and disposable-DB PASS |
+| P0 / PLAN-001 | Draneka Breeder PR #12 | canonical v1.0 + current Journal main inspection | this corrected plan and fresh independent review PASS |
+| BREEDER-FOUNDATION-001A | Journal PR from current exact Journal main | local migration sequence 029; fresh provider timestamp assigned at implementation | schema, role, RLS, FK, retention and disposable-DB PASS |
 | BREEDER-FOUNDATION-001B | Breeder repository | 001A qualified on disposable DB | auth adapter, domain commands, idempotency and API PASS |
 | BREEDER-FOUNDATION-001C | Breeder repository | 001B API | Today/Programs/output/hatch/group/tank web slice and readback PASS |
 | P4-GROWOUT-002 | Breeder + Journal only where needed | foundation slice | count/move/split/merge/loss/stage/provenance PASS |
@@ -339,10 +375,10 @@ Prototype screenshots or HTML behavior alone are not implementation evidence.
 
 ## 13. Rollback and failure strategy
 
-- Before production data exists, 025 may use a tested compensating/down script on a disposable target.
+- Before production data exists, planned repository migration 029 may use a tested compensating/down script on a disposable target.
 - After Breeder data exists, do not drop tables or delete history to roll back code.
 - Disable the server-side Breeder feature flag, stop new commands, preserve append-only data and deploy the last qualified application.
-- Repair forward with a new Journal migration; never rewrite 025.
+- Repair forward with a new Journal migration; never rewrite 029 or any prior Journal migration.
 - A failed cross-domain write leaves no half-created biological record. Journal API calls are outside Breeder biological transactions and use explicit pending or failed receipts if a future workflow needs compensation.
 - A failed media/publication handoff cannot change quantity or lineage.
 - A stale or conflicting idempotency key returns a deterministic conflict and does not retry a mutation.
@@ -366,15 +402,17 @@ API_SERVICE_BOUNDARY = IMPLEMENTATION_READY
 WEB_ARCHITECTURE = IMPLEMENTATION_READY
 MIGRATION_AND_ROLLBACK_PLAN = IMPLEMENTATION_READY
 TEST_AND_QUALIFICATION_PLAN = IMPLEMENTATION_READY
-CURRENT_JOURNAL_COLLISION_ANALYSIS = PASS
+CURRENT_JOURNAL_AUTHORITY = REBOUND_TO_897CE087D0D42DAC25EABE23B05B00A605F23644
+CURRENT_JOURNAL_PROVIDER_READBACK = RECORDED / FOUNDATION UNAPPLIED
+CURRENT_JOURNAL_COLLISION_ANALYSIS = REBOUND / FRESH IMPLEMENTATION-TIME CHECK REQUIRED
 FIRST_EXECUTABLE_PACKAGE = FROZEN
-INDEPENDENT_PLANNING_REVIEW = PASS
+INDEPENDENT_PLANNING_REVIEW = PRIOR PASS SUPERSEDED / FRESH REVIEW REQUIRED
 PRODUCTION_DATABASE_MUTATION = NO
 PRODUCTION_SOURCE_IMPLEMENTATION = NO
-BREEDER_V1_0_IMPLEMENTATION_READY = YES
+BREEDER_V1_0_IMPLEMENTATION_READY = PENDING FRESH INDEPENDENT REVIEW
 ~~~
 
-This means implementation work is admitted as the next Founder-gated activity. It does not itself authorize production migration, deployment, release or Android work.
+This corrected plan records the next Founder-gated implementation sequence but does not admit execution until fresh independent planning review and a separate bounded commission complete. It does not authorize production migration, deployment, release or Android work.
 
 ## 15. Non-effects
 
@@ -386,6 +424,6 @@ This planning PR does not:
 - implement production API, UI or Android source;
 - deploy services;
 - change Journal runtime-role/security code;
-- merge Journal PR #873;
+- adopt, copy, merge or implement from stale Journal PR #873;
 - infer existing Breeder history;
-- add marketplace management, payments, orders, shipping, CRM, genotype inference, predictive pairing authority, hardware integration or other v1.1 scope.
+- add marketplace management, payments, orders, shipping, CRM, genotype inference, predictive pairing authority, hardware integration, Android execution, generic Journal redesign, new production infrastructure or other v1.1 scope.

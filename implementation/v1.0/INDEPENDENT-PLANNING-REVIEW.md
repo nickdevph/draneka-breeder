@@ -1,11 +1,24 @@
 
-# Fresh Independent Planning Review — Draneka Aquarium Breeder v1.0
+# Historical Independent Planning Review — Superseded by Exact-Head Correction
 
-Date: 2026-09-09  
+Date: 2026-09-15
 Reviewer role: independent architecture, security and implementation-admission reviewer  
-Disposition: **PASS**
+Disposition: **HISTORICAL PASS / SUPERSEDED — FRESH REVIEW REQUIRED**
 
-This review was performed after the planning records were completed. It did not inherit the plan's implementation-ready labels as evidence. It re-bound the exact planning branch and re-read the plan, schema/domain, runtime-security, API, web, qualification and admission records.
+This review was performed at its historical content head and is retained as provenance only. It did not inherit the plan's implementation-ready labels as evidence. The later planning-authority correction changed the exact Journal authority, migration identity, custody and admission state, so this record is not a review of the corrected candidate and cannot supply current PASS evidence.
+
+## Current supersession addendum
+
+~~~text
+PR12_HEAD_BEFORE_CORRECTION = bc19e6fc6f86699373b1f053c308a7b05fb58aa1
+JOURNAL_MAIN_CURRENT = 897ce087d0d42dac25eabe23b05b00a605f23644
+JOURNAL_PR873 = OPEN / NON-DRAFT / STALE / UNMERGED / SEPARATE DISPOSITION
+BREEDER_REPOSITORY_MIGRATION = 029-journal-breeder-foundation.* / PLANNED / UNAPPLIED
+JOURNAL_PROVIDER_LATEST_READBACK = 20260915093928 / 34 APPLIED
+CURRENT_REVIEW_OF_CORRECTED_HEAD = NOT RUN
+~~~
+
+A fresh independent planning review must re-read the corrected exact PR #12 head, current Journal main, provider readback, Core-auth binding, role/RLS least-privilege gate and full v1.0 E2E sequence. This owner does not perform that review.
 
 ## 1. Exact binding
 
@@ -65,7 +78,7 @@ Journal-owned tanks, livestock, media, schedules, ordinary events and Journal In
 
 ### Migration authority — PASS
 
-The plan admits no Breeder migration runner. It sequences Journal migration 025 after the final reviewed and merged Journal migration 024 from PR #873, with exact marker/base re-binding if the Journal head moves.
+Historical finding only: the prior plan admitted no Breeder migration runner and sequenced the then-proposed Journal migration 025 after the then-proposed Journal migration 024 from PR #873. That historical sequencing is superseded; current planning binds to Journal main at `897ce087…` and planned local sequence 029.
 
 ### Schema/domain — PASS
 
@@ -85,7 +98,7 @@ The implementation target is a separate React/Vite/Node application with the can
 
 ### Collision/rollback — PASS
 
-Journal PR #873 is correctly treated as a hard dependency. Stale or unrelated Journal PRs are identified without being incorrectly adopted. Migration numbering, exact-base rebinding, forward repair, feature disable and data-preserving rollback are explicit.
+Historical finding only: the prior review treated Journal PR #873 as a hard dependency. Current correction instead identifies #873 as stale/unmerged historical work requiring separate disposition and binds Breeder to current Journal main.
 
 ### Qualification — PASS
 
@@ -108,12 +121,12 @@ API_SERVICE_BOUNDARY = IMPLEMENTATION_READY
 WEB_ARCHITECTURE = IMPLEMENTATION_READY
 MIGRATION_AND_ROLLBACK_PLAN = IMPLEMENTATION_READY
 TEST_AND_QUALIFICATION_PLAN = IMPLEMENTATION_READY
-CURRENT_JOURNAL_COLLISION_ANALYSIS = PASS
+HISTORICAL_CURRENT_JOURNAL_COLLISION_ANALYSIS = PASS / SUPERSEDED
 FIRST_EXECUTABLE_PACKAGE = FROZEN
-INDEPENDENT_PLANNING_REVIEW = PASS
+HISTORICAL_INDEPENDENT_PLANNING_REVIEW = PASS / SUPERSEDED
 PRODUCTION_DATABASE_MUTATION = NO
 PRODUCTION_SOURCE_IMPLEMENTATION = NO
-BREEDER_V1_0_IMPLEMENTATION_READY = YES
+HISTORICAL_BREEDER_V1_0_IMPLEMENTATION_READY = YES / SUPERSEDED
 ~~~
 
-This review admits the next bounded implementation commission only. It does not authorize a production migration, deployment, release, Android implementation or merge of Journal PR #873.
+At the historical head, this review admitted the next bounded implementation commission only. That admission is superseded by the correction. It never authorized a production migration, deployment, release, Android implementation or merge of Journal PR #873.
