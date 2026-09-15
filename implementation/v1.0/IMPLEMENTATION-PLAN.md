@@ -11,7 +11,9 @@ This is a bounded planning-authority correction. The prior planning review is st
 ~~~text
 BREEDER_MAIN = 1baee0e1b2a57f056dccc3c6db834b78f88cfede
 PR12_BASE = 1baee0e1b2a57f056dccc3c6db834b78f88cfede
-PR12_HEAD_BEFORE_CORRECTION = bc19e6fc6f86699373b1f053c308a7b05fb58aa1
+PR12_HEAD_BEFORE_CORRECTION = 65c0f90194aa9857a25b5e66865551ce63919c8c
+PR12_CORRECTION_COMMIT = EXACT SHA RECORDED IN THE DURABLE OWNER RESULT; THIS PLAN DOES NOT SELF-EMBED ITS OWN COMMIT HASH
+FINAL_PR12_HEAD_READBACK_RULE = RE-READ THE GITHUB PR #12 HEAD IMMEDIATELY BEFORE INDEPENDENT REVIEW; REVIEW ONLY THAT EXACT REMOTE SHA
 PR12_STATE = OPEN / DRAFT / UNMERGED
 
 JOURNAL_MAIN = 897ce087d0d42dac25eabe23b05b00a605f23644
@@ -20,12 +22,15 @@ JOURNAL_PROVIDER_APPLIED_COUNT_AT_READBACK = 34
 JOURNAL_PROVIDER_LATEST_VERSION_AT_READBACK = 20260915093928
 JOURNAL_PROVIDER_LATEST_NAME_AT_READBACK = af_pr5_temp_target_recovery_read_20260915_001
 
-BREEDER_REPOSITORY_MIGRATION = 029-journal-breeder-foundation.js + 029-journal-breeder-foundation.sql
-BREEDER_REPOSITORY_MIGRATION_STATUS = PLANNED / UNAPPLIED
+JOURNAL_REPOSITORY_MIGRATION = 029-journal-breeder-foundation.js + 029-journal-breeder-foundation.sql
+JOURNAL_REPOSITORY_MIGRATION_STATUS = PLANNED / UNAPPLIED
+JOURNAL_MIGRATION_FILE_LOCATION = JOURNAL PR CREATED FROM EXACT CURRENT JOURNAL MAIN
+BREEDER_MIGRATION_RUNNER = NONE
+BREEDER_PHYSICAL_SCHEMA_AUTHORITY = NONE
 BREEDER_PROVIDER_MIGRATION_VERSION = ASSIGN FRESH TIMESTAMP AT JOURNAL IMPLEMENTATION TIME / UNAPPLIED
 ~~~
 
-The provider readback above is the parent-supplied live readback at this execution point. It does not apply or qualify the planned Breeder migration.
+The provider readback above is the parent-supplied live readback at this execution point. It does not apply or qualify the planned Journal-owned migration. The exact correction commit SHA is recorded in the durable owner result after push; no self-hashing commit claim is made in this plan. GitHub PR #12 head must be re-read immediately before independent review, and review must bind to that exact remote readback.
 
 This plan is the execution contract for implementing the exact canonical holistic v1.0 product. It freezes the boundaries below so implementation can proceed without reopening foundational architecture.
 
@@ -122,7 +127,8 @@ The browser and Android clients never receive PostgreSQL credentials. The Breede
 | Phenotype/evaluations | Breeder | observation only; never genotype inference |
 | Selection/disposition | Breeder | current eligibility is derived from current history |
 | Lifecycle suggestions/Breeder Round | Breeder | projection/attention; never a biological fact |
-| Commerce evidence/handoff/reconciliation | Breeder | explicit evidence-bounded handoff; no biological rewrite |
+| Commerce handoff evidence | Breeder | explicit evidence-bounded handoff; no biological rewrite |
+| Commercial allocation/outcome receipts | AquaticFinder commerce | authoritative commercial receipt stream; Breeder accepts a validated immutable boundary receipt only |
 | Listings, channels, orders, payment, shipping, commercial allocation | AquaticFinder commerce | outside Breeder v1.0 |
 
 A foreign key to a Journal row does not transfer ownership of that Journal row.
@@ -153,6 +159,15 @@ The following are implementation contracts, not UI suggestions.
 - generation labels require sufficient evidence;
 - annual killifish hatch provenance includes the exact wetting attempt;
 - historical records are immutable for biological mutation.
+
+### Later commerce reconciliation contract — P7 only
+
+- AquaticFinder owns commercial allocation and outcome receipts. Breeder owns the biological quantity ledger and may store only an immutable, validated acceptance record or projection of an AquaticFinder receipt.
+- Allocation and outcome quantities are non-negative deltas.
+- For each handoff and channel, cumulative accepted allocation must not exceed the acknowledged allocation, and cumulative accepted outcome must not exceed the acknowledged allocation or the accepted allocation available for that outcome. An exception requires an explicit approved exception reference, reason and approval receipt; without those fields the receipt is rejected.
+- A duplicate `(channel, external reference)` with the same request hash returns the original accepted receipt. The same external reference with a different hash returns `IDEMPOTENCY_CONFLICT`. The same owner/idempotency key follows the same same-hash replay and different-hash conflict rule.
+- Rejected, duplicate-conflicting or over-limit receipts do not write `breeder_quantity_ledger`, alter biological counts, rewrite provenance or restore eligibility.
+- This contract is deferred to P7-COMMERCE-005 and is excluded from the 001A foundation and 001B service/API slices.
 
 ### Fact/action
 
@@ -198,7 +213,7 @@ Breeder dependency = NONE
 
 Do not copy PR #873, use its migration claim, or wait for it as a Breeder dependency. The Core→Journal consolidation and subsequent migration order are bound to current Journal main, not the stale PR #873 line. Any future #873 disposition is separate work and must be requalified at its own current head.
 
-The next valid Breeder repository migration identity is planned as:
+The next valid Journal repository migration identity for the Breeder foundation is planned as:
 
 ~~~text
 029-journal-breeder-foundation.js
@@ -222,7 +237,7 @@ The migration must:
 6. include disposable-Postgres qualification and a pre-data rollback proof;
 7. remain non-production until a separate Founder production-admission gate passes.
 
-The Breeder repository owns no production migration file or runner. Its PRs may contain contracts, domain code, UI and integration tests only.
+The Journal PR created from the exact Journal main owns the migration files and physical schema change. The Breeder repository owns no production migration file, migration runner or physical schema authority. Breeder PRs may contain contracts, domain code, UI and integration tests only.
 
 ## 7. Implementation-ready domain/service boundary
 
@@ -243,11 +258,16 @@ mergeOffspringGroups
 recordStageObservation
 recordSelectionEvaluation
 applyDisposition
+~~~
+
+Deferred P7 commerce commands, not part of the foundation/API slice:
+
+~~~text
 prepareCommerceHandoff
 reconcileCommerceOutcome
 ~~~
 
-Every command resolves the owner from a verified Core session, validates all same-owner references, checks an expected revision where state can race, uses an idempotency key, performs one database transaction, returns committed readback and emits an auditable command receipt.
+Create commands may omit expected revision because they establish a new revision-1 record. Updates and commands against mutable existing state must provide the current expected revision; missing or stale values are rejected. Every command otherwise resolves the owner from a verified Core session, validates all same-owner references, uses an idempotency key, performs one database transaction, returns committed readback and emits an auditable command receipt.
 
 Journal-owned writes—feeding, water tests, ordinary observations, media creation and schedule completion—call Journal's canonical service or API. Breeder may persist an explicit Breeder-to-Journal binding, but does not bypass Journal domain validation.
 
@@ -297,7 +317,7 @@ Initial Breeder release is prospective.
 | P4-GROWOUT-002 | Breeder + Journal only where needed | foundation slice | count/move/split/merge/loss/stage/provenance PASS |
 | P5-SELECTION-003 | Breeder | grow-out provenance | evaluation, goals, disposition and Pair Builder guardrails PASS |
 | P6-ROUND-004 | Breeder + Journal schedule adapter | selection/domain foundation | projection/action/fact separation and schedule integration PASS |
-| P7-COMMERCE-005 | Breeder + AquaticFinder contract | stable biological model | explicit evidence, handoff and non-mutating reconciliation PASS |
+| P7-COMMERCE-005 | Breeder + AquaticFinder contract | stable biological model | AquaticFinder-owned allocation/outcome receipts, non-negative and no-over-allocation reconciliation, external-reference/idempotency and non-mutating biological boundary PASS |
 | P8-HARDENING-006 | both repositories as needed | all v1.0 surfaces | responsive/a11y/security/regression PASS |
 | P9-ADMISSION-007 | Founder-gated | P8 | production migration/deployment admission PASS |
 | P10-ANDROID-008 | separate Android admission | stable web/domain contract | Android convergence/review only after P9 or separate Founder admission |
@@ -330,7 +350,7 @@ Implement only:
 - RLS, grants, owner-scope helper, account deletion/export/retention hooks;
 - migration marker/bootstrapping and tests.
 
-Do not implement selection, Pair Builder, commerce, Android, AI, marketplace operations, or new navigation.
+Do not implement selection, Pair Builder, commerce, Android, AI, marketplace operations, or new navigation. Commerce handoff/reconciliation remains deferred to P7 and is excluded from 001A and 001B.
 
 ### 001B — service/API
 
@@ -348,7 +368,7 @@ verified Core session
   -> committed readback
 ~~~
 
-The service must reject cross-user tank/livestock UUIDs, duplicate idempotency with a different request hash, stale revisions, invalid quantities and unsupported provenance claims.
+The service must reject cross-user tank/livestock UUIDs, duplicate idempotency with a different request hash, missing or stale revisions on mutable-state commands, invalid quantities and unsupported provenance claims. It does not implement the deferred P7 commerce contract.
 
 ### 001C — web
 

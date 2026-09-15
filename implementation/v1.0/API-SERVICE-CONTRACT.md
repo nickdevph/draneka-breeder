@@ -2,7 +2,7 @@
 # Breeder v1.0 API and Domain Service Contract
 
 Status: CORRECTED IMPLEMENTATION PLAN / FRESH REVIEW REQUIRED
-Transport: versioned JSON HTTP under /api/v1  
+Transport: versioned JSON HTTP under /api/v1
 Authority: Breeder domain service; Journal service remains owner for Journal facts
 
 The real Core-auth binding is the existing server-side Core session contract selected and re-read at implementation admission. Breeder must not create a parallel identity/session store, accept a caller-supplied owner identity, or treat a browser field as authorization. The corrected plan is bound to existing Journal Supabase project `sjodccpuyaasljcunmug`; it does not qualify a production runtime or migration.
@@ -51,9 +51,24 @@ POST /api/v1/commerce-handoffs
 POST /api/v1/commerce-handoffs/:handoffId/reconciliations
 ~~~
 
+The commerce endpoints are a deferred P7 contract and are not implemented in the 001A foundation or 001B service/API slices. AquaticFinder owns the authoritative commercial allocation and outcome receipts. Breeder accepts only a validated immutable receipt or projection and never treats it as biological quantity authority.
+
+For a reconciliation receipt, `allocationQuantity` and `outcomeQuantity` are non-negative deltas. Accepted cumulative allocation for a handoff and channel cannot exceed the acknowledged allocation, and accepted cumulative outcome cannot exceed the acknowledged allocation or accepted allocation available for that outcome. An approved exception requires an explicit exception reference, reason and approval receipt. A duplicate `(channelKey, externalReference)` or owner/idempotency key with the same request hash returns the original accepted receipt; a different hash returns `IDEMPOTENCY_CONFLICT`. Negative, over-limit or conflicting receipts are rejected without a `breeder_quantity_ledger` write or biological-history mutation.
+
 ## 3. Mutation envelope
 
-Every mutation requires:
+Every mutation requires an idempotency key and payload. `expectedRevision` is optional for create commands that establish a new revision-1 record, and required for updates or commands against mutable existing state.
+
+Create envelope:
+
+~~~json
+{
+  "idempotencyKey": "client-generated stable key",
+  "payload": {}
+}
+~~~
+
+Mutable-state command envelope:
 
 ~~~json
 {
@@ -211,7 +226,7 @@ A cached projection is disposable and rebuildable from append-only Breeder recor
 
 ## 9. API test contract
 
-The API suite must prove happy paths, retry idempotency, stale revision, concurrent split/merge, cross-user references, malformed provenance, quantity conservation, privacy, error recovery and committed readback. It must run against disposable Postgres and a deterministic Core-session test adapter; no production credentials are used.
+The API suite must prove happy paths, create-without-revision, required mutable-state revision, missing/stale revision rejection, retry idempotency, concurrent split/merge, cross-user references, malformed provenance, quantity conservation, privacy, error recovery and committed readback. The deferred P7 commerce suite must additionally prove non-negative allocation/outcome, no cumulative over-allocation or over-outcome without an approved exception, duplicate external-reference and idempotency handling, and no biological-ledger mutation on rejection. It must run against disposable Postgres and a deterministic Core-session test adapter; no production credentials are used.
 
 ## 10. Parent/source context endpoint
 

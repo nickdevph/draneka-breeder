@@ -52,7 +52,7 @@ A screenshot, static HTML prototype or passing mock-only test is not sufficient.
 
 Run on disposable Postgres:
 
-- migration applies from the exact current Journal main at implementation admission, after local migration prefix 028 and as planned local sequence 029;
+- Journal-owned migration applies from the exact current Journal main at implementation admission, after local migration prefix 028 and as planned local sequence 029;
 - a fresh provider timestamp is assigned after provider version 20260915093928 and is read back after apply; this plan claims no provider application;
 - marker/precondition rejects a wrong Journal base or migration collision;
 - migration is idempotent;
@@ -83,9 +83,20 @@ The current provider readback has no Breeder foundation tables; `public.catalogu
 - suggestion completion does not create a biological observation;
 - duplicate same-hash idempotency returns original readback;
 - duplicate different-hash idempotency conflicts;
+- create commands may omit expected revision and establish revision 1;
+- updates and commands against mutable existing state reject a missing expected revision;
 - stale revision conflicts;
 - concurrent split/merge cannot overspend quantity or deadlock;
 - transaction rollback leaves no partial biological state.
+
+Deferred P7 commerce reconciliation gates, excluded from the 001A foundation and 001B service/API slices:
+
+- AquaticFinder owns commercial allocation and outcome receipts; Breeder stores only validated immutable acceptance evidence;
+- allocation and outcome quantities are non-negative;
+- cumulative allocation cannot exceed the acknowledged allocation, and cumulative outcome cannot exceed the acknowledged allocation or accepted allocation available for that outcome, unless an explicit approved exception reference, reason and approval receipt is present;
+- duplicate external reference with the same request hash returns the original receipt, while a different hash conflicts;
+- duplicate owner/idempotency key follows the same-hash replay and different-hash conflict rule;
+- negative, over-limit or conflicting receipts do not write `breeder_quantity_ledger` or mutate biological history.
 
 ## 5. API and browser gates
 

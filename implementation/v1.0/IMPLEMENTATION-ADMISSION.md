@@ -9,8 +9,9 @@ Status: CORRECTED PLANNING ADMISSION / FRESH INDEPENDENT REVIEW REQUIRED / PRODU
 ~~~text
 CANONICAL_BREEDER_MAIN = 1baee0e1b2a57f056dccc3c6db834b78f88cfede
 PLANNING_PR = nickdevph/draneka-breeder#12
-PLANNING_HEAD_BEFORE_CORRECTION = bc19e6fc6f86699373b1f053c308a7b05fb58aa1
-PLANNING_HEAD_AFTER_CORRECTION = ASSIGNED_AFTER_COMMIT
+PLANNING_HEAD_BEFORE_CORRECTION = 65c0f90194aa9857a25b5e66865551ce63919c8c
+PLANNING_CORRECTION_COMMIT = EXACT SHA RECORDED IN THE DURABLE OWNER RESULT; THIS RECORD DOES NOT SELF-EMBED ITS OWN COMMIT HASH
+FINAL_PR12_HEAD_READBACK_RULE = RE-READ THE GITHUB PR #12 HEAD IMMEDIATELY BEFORE INDEPENDENT REVIEW; REVIEW ONLY THAT EXACT REMOTE SHA
 PLANNING_PR_STATE = OPEN / DRAFT / UNMERGED
 
 JOURNAL_MAIN = 897ce087d0d42dac25eabe23b05b00a605f23644
@@ -22,12 +23,15 @@ JOURNAL_RUNTIME_RLS_HEAD_AT_REVIEW = 829618fe2d3f20a64703021676032be429079fd3
 JOURNAL_RUNTIME_RLS_STATUS = OPEN / NON-DRAFT / STALE / NOT MERGED / SEPARATE DISPOSITION REQUIRED
 
 DATABASE_PROJECT = sjodccpuyaasljcunmug
-BREEDER_REPOSITORY_MIGRATION = 029-journal-breeder-foundation.js + 029-journal-breeder-foundation.sql
-BREEDER_REPOSITORY_MIGRATION_STATUS = PLANNED / UNAPPLIED
+JOURNAL_REPOSITORY_MIGRATION = 029-journal-breeder-foundation.js + 029-journal-breeder-foundation.sql
+JOURNAL_REPOSITORY_MIGRATION_STATUS = PLANNED / UNAPPLIED
+JOURNAL_MIGRATION_FILE_LOCATION = JOURNAL PR CREATED FROM EXACT CURRENT JOURNAL MAIN
+BREEDER_MIGRATION_RUNNER = NONE
+BREEDER_PHYSICAL_SCHEMA_AUTHORITY = NONE
 BREEDER_PROVIDER_MIGRATION_VERSION = ASSIGN FRESH TIMESTAMP AT IMPLEMENTATION TIME / UNAPPLIED
 ~~~
 
-After this document is committed, the planning PR head becomes the reviewed planning head and must be re-read before any independent review conclusion.
+The durable owner result records the exact correction commit SHA after the fast-forward push. This record is intentionally not a self-hashing claim. GitHub PR #12 head is the final custody authority and must be re-read immediately before any independent review conclusion; a moved head invalidates the review basis.
 
 ## 2. Collision analysis
 
@@ -62,7 +66,7 @@ If Journal main or provider state changes before implementation, all later packa
 ### 001A
 
 ~~~text
-JOURNAL_MIGRATION_029 = PLANNED / UNAPPLIED
+JOURNAL_LOCAL_MIGRATION_029 = PLANNED / UNAPPLIED
 BREEDER_ROLE_AND_RLS = REQUIRED GATE / NOT QUALIFIED
 COMPOSITE_JOURNAL_FKS = REQUIRED GATE / NOT QUALIFIED
 ACCOUNT_LIFECYCLE = REQUIRED GATE / NOT QUALIFIED
@@ -127,7 +131,7 @@ ROLE = IMPLEMENTATION OWNER
 PACKAGE = BREEDER-FOUNDATION-001A
 REPOSITORY = nickdevph/aquaticfinder-journal
 BASE = current exact Journal main re-read at implementation admission
-SCOPE = local migration 029 + implementation-time provider timestamp + focused schema/security/retention/bootstrap tests only
+SCOPE = Journal-owned local migration sequence 029 + implementation-time provider timestamp + focused schema/security/retention/bootstrap tests only
 DATABASE = disposable/non-production only
 PRODUCTION MUTATION = NO
 STOP = any stale base, security failure, marker mismatch, Journal regression, or independent review CHANGES_REQUIRED

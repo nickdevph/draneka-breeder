@@ -2,12 +2,12 @@
 # Breeder v1.0 Schema and Domain Model
 
 Status: CORRECTED IMPLEMENTATION PLAN / FRESH REVIEW REQUIRED
-Physical database: existing Journal Supabase project sjodccpuyaasljcunmug  
-Migration authority: nickdevph/aquaticfinder-journal at current exact main; planned local Breeder migration 029 after current local Journal prefix 028
+Physical database: existing Journal Supabase project sjodccpuyaasljcunmug
+Migration authority: nickdevph/aquaticfinder-journal at current exact main; planned Journal-owned local migration sequence 029 after current local Journal prefix 028
 
 Current Journal main: `897ce087d0d42dac25eabe23b05b00a605f23644`.
 
-Planned migration identity: `029-journal-breeder-foundation.js` + `029-journal-breeder-foundation.sql`, status **PLANNED / UNAPPLIED**. The provider timestamp is **UNASSIGNED UNTIL JOURNAL IMPLEMENTATION TIME / UNAPPLIED**; the Journal migration owner must allocate a fresh timestamp after provider version `20260915093928` and read it back after apply. Historical `025` is already occupied in the Journal repository and is never reused.
+`JOURNAL_LOCAL_MIGRATION_029` is `029-journal-breeder-foundation.js` + `029-journal-breeder-foundation.sql`, status **PLANNED / UNAPPLIED**. The files live in the Journal PR created from the exact Journal main. The provider timestamp is **UNASSIGNED UNTIL JOURNAL IMPLEMENTATION TIME / UNAPPLIED**; the Journal migration owner must allocate a fresh timestamp after provider version `20260915093928` and read it back after apply. Historical `025` is already occupied in the Journal repository and is never reused. Breeder has no migration runner or physical schema authority.
 
 This document freezes the domain model without executing it. Names are production recommendations; the authority and invariants are mandatory.
 
@@ -20,7 +20,7 @@ This document freezes the domain model without executing it. Names are productio
 - Child-to-parent references use composite foreign keys containing owner_user_id wherever the parent is owner-scoped.
 - Parent tables expose UNIQUE(id, owner_user_id) constraints to support composite foreign keys.
 - Biological history is append-only or archived. Hard delete is not a product operation.
-- Mutable projections carry a revision integer. Commands use expected_revision and optimistic concurrency.
+- Mutable projections carry a revision integer. Create commands may omit expected_revision and establish revision 1; updates and commands against mutable existing state require expected_revision and optimistic concurrency. The schema field is nullable only for create operations.
 - All dates are timestamptz unless explicitly named local_date or local_time.
 - Quantity columns are non-negative numeric/integer values with an explicit unit. Quantity is never silently inferred from a display string.
 
@@ -47,7 +47,7 @@ This document freezes the domain model without executing it. Names are productio
 | breeder_lifecycle_suggestions | Breeder projection | deterministic id + owner_user_id | defer, dismiss, resolve state | append history or supersede |
 | breeder_commerce_handoffs | Breeder | id + owner_user_id; biological snapshot | handoff status only | append-only handoff history |
 | breeder_commerce_handoff_media | Breeder association | id + owner_user_id; Journal media composite FK | none | handoff snapshot; no implicit additions |
-| breeder_commerce_reconciliations | Breeder/commercial boundary | id + owner_user_id; handoff FK | none after receipt | append-only; never biological authority |
+| breeder_commerce_reconciliations | AquaticFinder receipt; Breeder acceptance boundary | id + owner_user_id; handoff FK | none after receipt | append-only; never biological authority |
 
 ## 3. Foundation relations for BREEDER-FOUNDATION-001
 
@@ -307,7 +307,7 @@ The following are planned and must use the same owner/composite-FK conventions:
 - breeder_commerce_handoff_media;
 - breeder_commerce_reconciliations.
 
-Commerce handoffs store immutable biological snapshots, proposed commerce quantity, selected public media IDs and provenance evidence. Reconciliation stores commercial allocation/outcome only. It never writes quantity ledger entries.
+Commerce handoffs store immutable biological snapshots, proposed commerce quantity, selected public media IDs and provenance evidence. AquaticFinder owns the commercial allocation/outcome receipt; Breeder stores only a validated immutable acceptance boundary. Reconciliation stores non-negative commercial allocation/outcome deltas only and never writes quantity ledger entries.
 
 ## 5. Journal references and delete behavior
 
@@ -532,13 +532,20 @@ id uuid primary key
 owner_user_id uuid not null
 handoff_id uuid not null
 channel_key text not null
-external_reference text null
+external_reference text not null
+idempotency_key text not null
+request_hash text not null
 allocation_quantity numeric not null
 outcome_quantity numeric not null
 outcome_kind text not null: RESERVED | SOLD | RETURNED | CANCELLED | EXPIRED | REJECTED
 recorded_at timestamptz not null
 notes text null
+approved_exception_reference text null
+approved_exception_reason text null
+approved_exception_receipt text null
 unique(id, owner_user_id)
+unique(owner_user_id, idempotency_key)
+unique(owner_user_id, channel_key, external_reference)
 foreign key (handoff_id, owner_user_id)
   references breeder_commerce_handoffs(id, owner_user_id)
   on delete restrict
@@ -546,7 +553,7 @@ check allocation_quantity >= 0
 check outcome_quantity >= 0
 ~~~
 
-Reconciliation is commercial evidence. It cannot insert into breeder_quantity_ledger, alter source counts, change provenance or restore Pair Builder eligibility.
+Allocation and outcome quantities are non-negative deltas. For each handoff and channel, cumulative accepted allocation cannot exceed the acknowledged allocation, and cumulative accepted outcome cannot exceed the acknowledged allocation or accepted allocation available for that outcome. A receipt exceeding either bound requires an explicit approved exception reference, reason and approval receipt; otherwise it is rejected. The external-reference and idempotency uniques plus request-hash comparison make same-hash replay return the original receipt and different-hash reuse return `IDEMPOTENCY_CONFLICT`. Reconciliation is commercial evidence. It cannot insert into `breeder_quantity_ledger`, alter source counts, change provenance or restore Pair Builder eligibility.
 
 ## 8. Common constraints and runtime access for all relations
 

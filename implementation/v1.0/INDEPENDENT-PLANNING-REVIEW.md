@@ -2,7 +2,7 @@
 # Historical Independent Planning Review — Superseded by Exact-Head Correction
 
 Date: 2026-09-15
-Reviewer role: independent architecture, security and implementation-admission reviewer  
+Reviewer role: independent architecture, security and implementation-admission reviewer
 Disposition: **HISTORICAL PASS / SUPERSEDED — FRESH REVIEW REQUIRED**
 
 This review was performed at its historical content head and is retained as provenance only. It did not inherit the plan's implementation-ready labels as evidence. The later planning-authority correction changed the exact Journal authority, migration identity, custody and admission state, so this record is not a review of the corrected candidate and cannot supply current PASS evidence.
@@ -13,7 +13,7 @@ This review was performed at its historical content head and is retained as prov
 PR12_HEAD_BEFORE_CORRECTION = bc19e6fc6f86699373b1f053c308a7b05fb58aa1
 JOURNAL_MAIN_CURRENT = 897ce087d0d42dac25eabe23b05b00a605f23644
 JOURNAL_PR873 = OPEN / NON-DRAFT / STALE / UNMERGED / SEPARATE DISPOSITION
-BREEDER_REPOSITORY_MIGRATION = 029-journal-breeder-foundation.* / PLANNED / UNAPPLIED
+JOURNAL_REPOSITORY_MIGRATION = 029-journal-breeder-foundation.* / PLANNED / UNAPPLIED / JOURNAL PR FROM EXACT JOURNAL MAIN
 JOURNAL_PROVIDER_LATEST_READBACK = 20260915093928 / 34 APPLIED
 CURRENT_REVIEW_OF_CORRECTED_HEAD = NOT RUN
 ~~~
@@ -90,7 +90,7 @@ The plan uses a dedicated Breeder capability/login role, least-privilege grants,
 
 ### API and transactions — PASS
 
-The API is intent-oriented and versioned. Parentage context creation is explicit before reproductive output creation. Mutations carry idempotency and expected revision, lock affected rows deterministically, preserve quantity/provenance, return committed readback and use stable errors. Journal-owned writes remain behind Journal services.
+The API is intent-oriented and versioned. Parentage context creation is explicit before reproductive output creation. Creates may omit expected revision, while updates and commands against mutable state require it; all commands carry idempotency, lock affected rows deterministically, preserve quantity/provenance, return committed readback and use stable errors. Journal-owned writes remain behind Journal services.
 
 ### Web — PASS
 
